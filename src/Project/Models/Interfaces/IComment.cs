@@ -12,5 +12,6 @@ namespace Project.Models.Interfaces
         void Update(Comment comm);
         void Add(Comment comm);
         IEnumerable<Comment> GetAll();
+        object Find(int id);
     }
 }

@@ -5,73 +5,73 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Project.Models.Interfaces;
 using Project.Models;
-
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Project.Controllers
 {
     [Route("api/v1/[controller]")]
-    public class AccountController : Controller
+    public class CommentController : Controller
     {
-        public AccountController(IAccount acc)
+        public CommentController(IComment comm)
         {
-            Accounts = acc;
+            Comments = comm;
         }
-        public IAccount Accounts { get; set; }
+        public IComment Comments { get; set; }
 
-        public IEnumerable<Account> GetAll()
+        [HttpGet]
+        public IEnumerable<Comment> GetAll()
         {
-            return Accounts.GetAll();
+            return Comments.GetAll();
         }
 
         [HttpGet("{id}", Name = "GetAcc")]
-        public IActionResult GetById(string Id)
+        public IActionResult GetById(int Id)
         {
-            var item = Accounts.Find(Id);
-            if (item == null)
+            var comm = Comments.Find(Id);
+            if (comm == null)
                 return NotFound();
-            return new ObjectResult(item);
+            return new ObjectResult(comm);
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] Account acc)
+        public IActionResult Create([FromBody] Comment comm)
         {
-            if (acc == null)
+            if (comm == null)
             {
                 return BadRequest();
             }
-            Accounts.Add(acc);
-            return CreatedAtRoute("GetTodo", new { id = acc.Id }, acc);
+            Comments.Add(comm);
+            return CreatedAtRoute("GetTodo", new { id = comm.Id }, comm);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(string id, [FromBody] Account acc)
+        public IActionResult Update(int id, [FromBody] Comment comm)
         {
-            if (acc == null || acc.Id != id)
+            if (comm == null || comm.Id != id)
             {
                 return BadRequest();
             }
 
-            var p = Accounts.Find(id);
+            var p = Comments.Find(id);
             if (p == null)
             {
                 return NotFound();
             }
 
-            Accounts.Update(acc);
+            Comments.Update(comm);
             return new NoContentResult();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var acc = Accounts.Find(id);
-            if (acc == null)
+            var comm = Comments.Find(id);
+            if (comm == null)
             {
                 return NotFound();
             }
 
-            Accounts.Remove(id);
+            Comments.Remove(id.ToString());
             return new NoContentResult();
         }
     }
