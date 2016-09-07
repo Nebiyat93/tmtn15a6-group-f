@@ -14,7 +14,7 @@ namespace Project.Models
 
         public Account()
         {
-            UserName = new char[12];
+            UserName = new char[] { 'c' };
         }
     }
 }
