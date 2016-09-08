@@ -13,7 +13,8 @@ namespace Project.Models
 
         public Direction()
         {
-            Description = new char[120];
+            //Description = new char[120];
+            Description = new char[] { 'c' };
         }
     }
 }
