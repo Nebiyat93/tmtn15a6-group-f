@@ -8,9 +8,9 @@ namespace Project.Models
     public class Comment
     {
         public int Id { get; set; }
-        public char[] Text;
+        public string Text { get; set; }
         public int Grade { get; set; }
-        public char[] Image;
+        public string Image { get; set; }
         public int Created { get; set; }
     }
 }

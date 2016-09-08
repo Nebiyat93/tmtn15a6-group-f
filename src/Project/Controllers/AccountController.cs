@@ -14,17 +14,23 @@ namespace Project.Controllers
     public class AccountController : Controller
     {
 
+        public static List<Account> m_Accounts = new List<Account>();
+
+        
+
         public AccountController(IAccount acc)
         {
             Accounts = acc;
         }
         public IAccount Accounts { get; set; }
 
-        [HttpGet]
+        [HttpGet("GetAll")]
         public IEnumerable<Account> GetAll()
         {
             return Accounts.GetAll();
         }
+
+
 
         [HttpGet("{id}", Name = "GetAcc")]
         public IActionResult GetById(string Id)
@@ -40,7 +46,32 @@ namespace Project.Controllers
         {
             if (acc == null)
                 return BadRequest();
-            Accounts.Add(acc);
+
+            if (acc.UserName.Length > 0 && acc.UserName.Length < 13)
+            {
+
+                if (m_Accounts.Count < 1)
+                {
+                    m_Accounts.Add(acc);
+                    Accounts.Add(acc);
+                    return Ok();
+                }
+                else
+                {
+                    for (int i = 0; i < m_Accounts.Count; i++)
+                    {
+                        if (m_Accounts[i].UserName != acc.UserName)
+                        {
+                            m_Accounts.Add(acc);
+                            Accounts.Add(acc);
+                            return Ok();
+                        }
+                        else return BadRequest();
+                    }
+                }
+            }
+            else return BadRequest();
+
             return CreatedAtRoute("GetAcc", new { id = acc.Id }, acc);
         }
 

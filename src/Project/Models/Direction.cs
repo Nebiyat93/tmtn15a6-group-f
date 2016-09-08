@@ -9,7 +9,7 @@ namespace Project.Models
     {
         public int Id { get; set; }
         public int Order { get; set; }
-        public char[] Description;
+        public string Description { get; set; }
 
     }
 }

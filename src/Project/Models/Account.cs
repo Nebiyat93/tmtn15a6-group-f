@@ -8,7 +8,7 @@ namespace Project.Models
     public class Account
     {
         public string Id { get; set; }
-        public char[] UserName;
+        public string UserName;
         public double Latitude { get; set; }
         public double Longitude { get; set; }
     }

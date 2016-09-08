@@ -8,9 +8,9 @@ namespace Project.Models
     public class Recipe
     {
         public int Id { get; set; }
-        public char[] Name;
-        public char[] Description;
-        public char[] Image;
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Image { get; set; }
         public int Created { get; set; }
     }
 }
