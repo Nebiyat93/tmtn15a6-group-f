@@ -39,9 +39,7 @@ namespace Project.Controllers
         public IActionResult Create([FromBody] Account acc)
         {
             if (acc == null)
-            {
                 return BadRequest();
-            }
             Accounts.Add(acc);
             return CreatedAtRoute("GetAcc", new { id = acc.Id }, acc);
         }

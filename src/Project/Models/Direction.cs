@@ -7,14 +7,9 @@ namespace Project.Models
 {
     public class Direction
     {
-        public int Id;
-        public int Order;
+        public int Id { get; set; }
+        public int Order { get; set; }
         public char[] Description;
 
-        public Direction()
-        {
-            //Description = new char[120];
-            Description = new char[] { 'c' };
-        }
     }
 }

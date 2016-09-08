@@ -11,10 +11,5 @@ namespace Project.Models
         public char[] UserName;
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-
-        public Account()
-        {
-            UserName = new char[] { 'c' };
-        }
     }
 }

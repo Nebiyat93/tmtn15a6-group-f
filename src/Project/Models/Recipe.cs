@@ -7,17 +7,10 @@ namespace Project.Models
 {
     public class Recipe
     {
-        public int Id;
+        public int Id { get; set; }
         public char[] Name;
         public char[] Description;
         public char[] Image;
-        public int Created;
-
-        public Recipe()
-        {
-            Name = new char[70];
-            Description = new char[300];
-            Image = new char[200];
-        }
+        public int Created { get; set; }
     }
 }

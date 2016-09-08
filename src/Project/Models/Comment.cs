@@ -7,16 +7,10 @@ namespace Project.Models
 {
     public class Comment
     {
-        public int Id;
+        public int Id { get; set; }
         public char[] Text;
-        public int Grade;
+        public int Grade { get; set; }
         public char[] Image;
-        public int Created;
-
-        public Comment()
-        {
-            Text = new char[400];
-            Image = new char[200];
-        }
+        public int Created { get; set; }
     }
 }
