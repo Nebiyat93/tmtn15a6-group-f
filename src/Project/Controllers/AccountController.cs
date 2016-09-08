@@ -13,12 +13,14 @@ namespace Project.Controllers
     [Route("api/v1/[controller]")]
     public class AccountController : Controller
     {
+
         public AccountController(IAccount acc)
         {
             Accounts = acc;
         }
         public IAccount Accounts { get; set; }
 
+        [HttpGet]
         public IEnumerable<Account> GetAll()
         {
             return Accounts.GetAll();
@@ -41,7 +43,7 @@ namespace Project.Controllers
                 return BadRequest();
             }
             Accounts.Add(acc);
-            return CreatedAtRoute("GetTodo", new { id = acc.Id }, acc);
+            return CreatedAtRoute("GetAcc", new { id = acc.Id }, acc);
         }
 
         [HttpPut("{id}")]
@@ -63,7 +65,7 @@ namespace Project.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(string id)
         {
             var acc = Accounts.Find(id);
             if (acc == null)

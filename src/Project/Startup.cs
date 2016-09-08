@@ -42,6 +42,8 @@ namespace Project
             services.AddMvc();
 
             services.AddSingleton<IAccount, AccountRepository>();
+            services.AddSingleton<IComment, CommentRepository>();
+            services.AddSingleton<IRecipe, RecipeRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline

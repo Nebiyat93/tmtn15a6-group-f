@@ -5,71 +5,74 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Project.Models.Interfaces;
 using Project.Models;
+
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Project.Controllers
 {
     [Route("api/v1/[controller]")]
-    public class CommentController : Controller
+    public class RecipeController : Controller
     {
-        public CommentController(IComment comm)
+        public RecipeController(IRecipe recep)
         {
-            Comments = comm;
+            Recipes = recep;
         }
-        public IComment Comments { get; set; }
+        public IRecipe Recipes { get; set; }
 
         [HttpGet]
-        public IEnumerable<Comment> GetAll()
+        public IEnumerable<Recipe> GetAll()
         {
-            return Comments.GetAll();
+            return Recipes.GetAll();
         }
 
-        [HttpGet("{id}", Name = "GetComm")]
+        [HttpGet("{id}", Name = "GetRecep")]
         public IActionResult GetById(int Id)
         {
-            var comm = Comments.Find(Id);
-            if (comm == null)
+            var item = Recipes.Find(Id);
+            if (item == null)
                 return NotFound();
-            return new ObjectResult(comm);
+            return new ObjectResult(item);
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] Comment comm)
+        public IActionResult Create([FromBody] Recipe recep)
         {
-            if (comm == null)
+            if (recep == null)
             {
                 return BadRequest();
             }
-            Comments.Add(comm);
-            return CreatedAtRoute("GetComm", new { id = comm.Id }, comm);
+            Recipes.Add(recep);
+            return CreatedAtRoute("GetRecep", new { id = recep.Id }, recep);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] Comment comm)
+        public IActionResult Update(int id, [FromBody] Recipe recep)
         {
-            if (comm == null || comm.Id != id)
+            if (recep == null || recep.Id != id)
             {
                 return BadRequest();
             }
 
-            var p = Comments.Find(id);
+            var p = Recipes.Find(id);
             if (p == null)
             {
                 return NotFound();
             }
 
-            Comments.Update(comm);
+            Recipes.Update(recep);
             return new NoContentResult();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var comm = Comments.Find(id);
-            if (comm == null)
+            var acc = Recipes.Find(id);
+            if (acc == null)
+            {
                 return NotFound();
+            }
 
-            Comments.Remove(id);
+            Recipes.Remove(id);
             return new NoContentResult();
         }
     }

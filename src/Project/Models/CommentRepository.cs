@@ -7,7 +7,7 @@ using System.Collections.Concurrent;
 
 namespace Project.Models
 {
-    public class CommentRepository
+    public class CommentRepository : IComment
     {
         private static ConcurrentDictionary<int, Comment> _comm =
       new ConcurrentDictionary<int, Comment>();
