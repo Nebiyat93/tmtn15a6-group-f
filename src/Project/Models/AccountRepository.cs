@@ -12,10 +12,6 @@ namespace Project.Models
         private static ConcurrentDictionary<string, Account> _accs =
             new ConcurrentDictionary<string, Account>();
 
-        public AccountRepository()
-        {
-            Add(new Account { Id = Guid.NewGuid().ToString() });
-        }
 
         public IEnumerable<Account> GetAll()
         {
