@@ -17,12 +17,12 @@ namespace Project.Models
         public int Grade { get; set; }
         [MaxLength(200), MinLength(0)]
         public string Image { get; set; }
-        public int Created { get; set; }
+        public int Created { get; set; } 
 
         public int AccountId { get; set; }
         public int RecipeId { get; set; }
 
         public Account Account { get; set; } 
-        public Recipe Recipe { get; set; } 
+        public Recipe Recipe { get; set; }
     }
 }

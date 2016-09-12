@@ -28,6 +28,7 @@ namespace Project.Models
 
         public ICollection<Comment> Comments { get; set; } 
         public ICollection<Direction> Directions { get; set; } 
+        public ICollection<AccountRecipe> Favorites { get; set; }
 
         public Account Account { get; set; } 
     }
