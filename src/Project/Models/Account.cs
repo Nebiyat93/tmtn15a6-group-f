@@ -17,8 +17,8 @@ namespace Project.Models
         [Key]
         public string Id { get; set; }
         [Required]
-        [MaxLength(12), MinLength(1)]
-        public string UserName;
+        [MaxLength(12)][MinLength(1)]
+        public string UserName { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
 

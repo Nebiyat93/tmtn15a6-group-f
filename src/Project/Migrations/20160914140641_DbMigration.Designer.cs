@@ -8,7 +8,7 @@ using Project.SQL_Database;
 namespace Project.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20160914134225_DbMigration")]
+    [Migration("20160914140641_DbMigration")]
     partial class DbMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,10 @@ namespace Project.Migrations
                     b.Property<double>("Latitude");
 
                     b.Property<double>("Longitude");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 12);
 
                     b.HasKey("Id");
 

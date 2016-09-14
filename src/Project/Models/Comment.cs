@@ -11,11 +11,11 @@ namespace Project.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        [MaxLength(400), MinLength(10)]
+        [MaxLength(400)][ MinLength(10)]
         public string Text { get; set; }
         [Required]
         public int Grade { get; set; }
-        [MaxLength(200), MinLength(0)]
+        [MaxLength(200)][MinLength(0)]
         public string Image { get; set; }
         public int Created { get; set; } 
 

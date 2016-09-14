@@ -24,6 +24,10 @@ namespace Project.Migrations
 
                     b.Property<double>("Longitude");
 
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 12);
+
                     b.HasKey("Id");
 
                     b.ToTable("Accounts");

@@ -13,7 +13,7 @@ namespace Project.Models
         [Required]
         public int Order { get; set; }
         [Required]
-        [MaxLength(120), MinLength(5)]
+        [MaxLength(120)][ MinLength(5)]
         public string Description { get; set; }
 
         public int RecipeId { get; set; }

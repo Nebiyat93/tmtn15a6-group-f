@@ -75,7 +75,7 @@ namespace Project.Controllers
 
             //    return CreatedAtRoute("GetAcc", new { id = acc.Id }, acc);
 
-            if (ModelState.IsValid)
+            if (ModelState.IsValid) // Does check with the DataAnnotations if its true we do all other checks that the database couldnt handle.
             {
                  Accounts.Add(acc);
                 _context.SaveChanges();

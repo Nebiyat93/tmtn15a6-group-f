@@ -15,7 +15,8 @@ namespace Project.Migrations
                 {
                     Id = table.Column<string>(nullable: false),
                     Latitude = table.Column<double>(nullable: false),
-                    Longitude = table.Column<double>(nullable: false)
+                    Longitude = table.Column<double>(nullable: false),
+                    UserName = table.Column<string>(maxLength: 12, nullable: false)
                 },
                 constraints: table =>
                 {
