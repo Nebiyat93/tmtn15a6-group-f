@@ -8,7 +8,7 @@ namespace Project.Models
 {
     public class AccountRecipe
     {
-        public int AccountId { get; set; }
+        public string AccountId { get; set; }
         public Account Account { get; set; }
 
         public int RecipeId { get; set; }

@@ -19,8 +19,8 @@ namespace Project.SQL_Database
         {
             modelBuilder.Entity<AccountRecipe>().HasKey(pt => new { pt.AccountId, pt.RecipeId });
 
-            modelBuilder.Entity<AccountRecipe>().HasOne(pt => pt.Account).WithMany(pt => pt.Favorites).HasForeignKey(pt => pt.AccountId);
-            modelBuilder.Entity<AccountRecipe>().HasOne(pt => pt.Recipe).WithMany(pt => pt.Favorites).HasForeignKey(pt => pt.RecipeId);
+            modelBuilder.Entity<AccountRecipe>().HasOne(pt => pt.Account).WithMany(pt => pt.AccountRecipes).HasForeignKey(pt => pt.AccountId);
+            modelBuilder.Entity<AccountRecipe>().HasOne(pt => pt.Recipe).WithMany(pt => pt.AccountRecipes).HasForeignKey(pt => pt.RecipeId);
         }
 
         public DbSet<Account> Accounts { get; set; }

@@ -8,7 +8,7 @@ namespace Project.Models
     public class Comment
     {
         public Comment() { }
-
+        [Key]
         public int Id { get; set; }
         [Required]
         [MaxLength(400), MinLength(10)]

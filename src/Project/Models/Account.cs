@@ -10,10 +10,11 @@ namespace Project.Models
     {
         public Account()
         {
-            Comments = new HashSet<Comment>(); 
-            Recipes = new HashSet<Recipe>();  
+            Comments = new HashSet<Comment>();
+            Recipes = new HashSet<Recipe>();
         }
         
+        [Key]
         public string Id { get; set; }
         [Required]
         [MaxLength(12), MinLength(1)]
@@ -24,7 +25,7 @@ namespace Project.Models
         public ICollection<Comment> Comments { get; set; } 
         public ICollection<Recipe> Recipes { get; set; } 
 
-        public ICollection<AccountRecipe> Favorites {get; set;}
+        public ICollection<AccountRecipe> AccountRecipes {get; set;}
 
     }
 }

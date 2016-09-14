@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Project.Models.Interfaces;
 using Project.Models;
-
+using Project.SQL_Database;
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Project.Controllers
@@ -13,7 +13,7 @@ namespace Project.Controllers
     [Route("api/v1/[controller]")]
     public class AccountController : Controller
     {
-
+        private MyDbContext _context = new MyDbContext();
         public static List<Account> m_Accounts = new List<Account>();
 
         
@@ -42,37 +42,46 @@ namespace Project.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Create([FromBody] Account acc)
         {
-            if (acc == null)
-                return BadRequest();
+            //    if (acc == null)
+            //        return BadRequest();
 
-            if (acc.UserName.Length > 0 && acc.UserName.Length < 13)
+            //    if (acc.UserName.Length > 0 && acc.UserName.Length < 13)
+            //    {
+
+            //        if (m_Accounts.Count < 1)
+            //        {
+            //            m_Accounts.Add(acc);
+            //            Accounts.Add(acc);
+            //            return Ok();
+            //        }
+            //        else
+            //        {
+            //            for (int i = 0; i < m_Accounts.Count; i++)
+            //            {
+            //                if (m_Accounts[i].UserName != acc.UserName)
+            //                {
+            //                    m_Accounts.Add(acc);
+            //                    Accounts.Add(acc);
+            //                    return Ok();
+            //                }
+            //                else return BadRequest();
+            //            }
+            //        }
+            //    }
+            //    else return BadRequest();
+
+            //    return CreatedAtRoute("GetAcc", new { id = acc.Id }, acc);
+
+            if (ModelState.IsValid)
             {
-
-                if (m_Accounts.Count < 1)
-                {
-                    m_Accounts.Add(acc);
-                    Accounts.Add(acc);
-                    return Ok();
-                }
-                else
-                {
-                    for (int i = 0; i < m_Accounts.Count; i++)
-                    {
-                        if (m_Accounts[i].UserName != acc.UserName)
-                        {
-                            m_Accounts.Add(acc);
-                            Accounts.Add(acc);
-                            return Ok();
-                        }
-                        else return BadRequest();
-                    }
-                }
+                 Accounts.Add(acc);
+                _context.SaveChanges();
+                return Ok();
             }
-            else return BadRequest();
-
-            return CreatedAtRoute("GetAcc", new { id = acc.Id }, acc);
+            else return NotFound();
         }
 
         [HttpPut("{id}")]

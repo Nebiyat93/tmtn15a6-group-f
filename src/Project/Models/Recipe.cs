@@ -11,8 +11,9 @@ namespace Project.Models
         {
             Comments = new HashSet<Comment>();
             Directions = new HashSet<Direction>();
-
+            
         }
+        [Key]
         public int Id { get; set; }
         [Required]
         [MaxLength(70), MinLength(5)]
@@ -24,11 +25,11 @@ namespace Project.Models
         public string Image { get; set; }
         public int Created { get; set; }
 
-        public int AccountId{get;set;}
+        public string AccountId{get;set;}
 
         public ICollection<Comment> Comments { get; set; } 
         public ICollection<Direction> Directions { get; set; } 
-        public ICollection<AccountRecipe> Favorites { get; set; }
+        public ICollection<AccountRecipe> AccountRecipes { get; set; }
 
         public Account Account { get; set; } 
     }

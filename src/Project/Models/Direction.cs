@@ -8,6 +8,7 @@ namespace Project.Models
     public class Direction
     {
         public Direction() { }
+        [Key]
         public int Id { get; set; }
         [Required]
         public int Order { get; set; }

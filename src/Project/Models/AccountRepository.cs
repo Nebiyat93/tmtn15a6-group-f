@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Project.Models.Interfaces;
+using Project.SQL_Database;
 
 namespace Project.Models
 {
@@ -12,6 +13,7 @@ namespace Project.Models
         private static ConcurrentDictionary<string, Account> _accs =
             new ConcurrentDictionary<string, Account>();
 
+        private MyDbContext _context = new MyDbContext();
 
         public IEnumerable<Account> GetAll()
         {
@@ -20,14 +22,21 @@ namespace Project.Models
 
         public void Add(Account acc)
         {
-            acc.Id = Guid.NewGuid().ToString();
-            _accs[acc.Id] = acc;
+            acc.Id = Guid.NewGuid().ToString(); // generate new id
+            //_accs[acc.Id] = acc;
+            _context.Accounts.Add(acc);
+            _context.SaveChanges();
         }
 
         public Account Find(string id)
         {
             Account acc;
-            _accs.TryGetValue(id, out acc);
+            if (_accs.TryGetValue(id, out acc))
+            {
+                var _acc = _context.Accounts.First(p => p.Id == acc.Id);
+                return _acc;
+            }
+
             return acc;
         }
 
@@ -41,6 +50,7 @@ namespace Project.Models
         public void Update(Account acc)
         {
             _accs[acc.Id] = acc;
+            _context.SaveChanges();
         }
     }
 }
