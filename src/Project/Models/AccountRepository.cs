@@ -17,7 +17,9 @@ namespace Project.Models
 
         public IEnumerable<Account> GetAll()
         {
-            return _accs.Values;
+            var acc = _context.Accounts;
+
+            return acc;
         }
 
         public void Add(Account acc)
@@ -30,14 +32,12 @@ namespace Project.Models
 
         public Account Find(string id)
         {
-            Account acc;
-            if (_accs.TryGetValue(id, out acc))
-            {
-                var _acc = _context.Accounts.First(p => p.Id == acc.Id);
-                return _acc;
-            }
+            
+            var _acc = _context.Accounts.First(p => p.Id == id);
+            return _acc;
+            
 
-            return acc;
+           
         }
 
         public Account Remove(string Id)
