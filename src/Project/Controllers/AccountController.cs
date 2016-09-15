@@ -42,48 +42,74 @@ namespace Project.Controllers
         }
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
         public IActionResult Create([FromBody] Account acc)
         {
-            //    if (acc == null)
-            //        return BadRequest();
+            //string errors = "";
 
-            //    if (acc.UserName.Length > 0 && acc.UserName.Length < 13)
-            //    {
+            
 
-            //        if (m_Accounts.Count < 1)
-            //        {
-            //            m_Accounts.Add(acc);
-            //            Accounts.Add(acc);
-            //            return Ok();
-            //        }
-            //        else
-            //        {
-            //            for (int i = 0; i < m_Accounts.Count; i++)
-            //            {
-            //                if (m_Accounts[i].UserName != acc.UserName)
-            //                {
-            //                    m_Accounts.Add(acc);
-            //                    Accounts.Add(acc);
-            //                    return Ok();
-            //                }
-            //                else return BadRequest();
-            //            }
-            //        }
-            //    }
-            //    else return BadRequest();
-
-            //    return CreatedAtRoute("GetAcc", new { id = acc.Id }, acc);
-
-            if (ModelState.IsValid) // Does check with the DataAnnotations if its true we do all other checks that the database couldnt handle.
+            if (acc == null)
             {
-
-                 Accounts.Add(acc);
-                
-                return Ok();
+                //errors = BadRequest().ToString();
+                return BadRequest();
             }
-            else return NotFound();
+
+            if (acc.UserName == null)
+            {
+                //errors = errors + BadRequest("UserNameMissing").ToString();
+                return BadRequest("UserNameMissing");
+            }
+
+            if (acc.Longitude == 0)
+                return BadRequest("LongitudeMissing");
+
+            if (acc.Latitude == 0)
+                return BadRequest("LatitudeMissing");
+
+            if (acc.UserName.Length < 0 && acc.UserName.Length > 13)
+                return BadRequest("InvalidUserName");
+
+            else
+            {
+                if (Accounts.GetAll() == null)
+
+                {
+                    Accounts.Add(acc);
+                    return Created(acc.Id, acc);
+                }
+
+                else
+                {
+                    if (Accounts.FindUser(acc.UserName) != null)
+                        return BadRequest("DuplicateUserName");
+
+                    if (ModelState.IsValid) // Does check with the DataAnnotations if its true we do all other checks that the database couldnt handle.
+                    {
+
+                        Accounts.Add(acc);
+                        return CreatedAtRoute("GetAcc", new { id = acc.Id }, acc);
+
+                        //return Ok();
+                    }
+
+                    else
+                    {
+                        //Accounts.Add(acc);
+                        //return Created(acc.Id, acc);
+                        return BadRequest();
+                    }
+
+                }
+
+            }
         }
+                
+            /*
+            else (errors != "")
+            {
+                    return BadRequest("errors:" + errors);
+                }
+            }*/
 
         [HttpPut("{id}")]
         public IActionResult Update(string id, [FromBody] Account acc)
