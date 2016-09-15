@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Project.Models.Interfaces;
 using Project.Models;
 using Project.SQL_Database;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Project.Controllers
@@ -15,8 +16,8 @@ namespace Project.Controllers
     {
         private MyDbContext _context = new MyDbContext();
         public static List<Account> m_Accounts = new List<Account>();
+        private List<BadRequestObjectResult> _badRequests = new List<BadRequestObjectResult>();
 
-        
 
         public AccountController(IAccount acc)
         {
@@ -41,67 +42,56 @@ namespace Project.Controllers
             return new ObjectResult(item);
         }
 
-        [HttpPost]
-        public IActionResult Create([FromBody] Account acc)
+        private bool CheckInputs(Account acc)
         {
-            //string errors = "";
-
-            
-
             if (acc == null)
             {
-                //errors = BadRequest().ToString();
-                return BadRequest();
+                _badRequests.Add(BadRequest("NullAccount"));
+                return false;
             }
 
             if (acc.UserName == null)
             {
-                //errors = errors + BadRequest("UserNameMissing").ToString();
-                return BadRequest("UserNameMissing");
+                _badRequests.Add(BadRequest("UserNameMissing"));
+                return false;
             }
-
-            if (acc.Longitude == 0)
-                return BadRequest("LongitudeMissing");
-
-            if (acc.Latitude == 0)
-                return BadRequest("LatitudeMissing");
-
-            if (acc.UserName.Length < 0 && acc.UserName.Length > 13)
-                return BadRequest("InvalidUserName");
 
             else
             {
                 if (Accounts.GetAll() == null)
-
                 {
                     Accounts.Add(acc);
-                    return Created(acc.Id, acc);
+                    return true;
                 }
 
                 else
                 {
                     if (Accounts.FindUser(acc.UserName) != null)
-                        return BadRequest("DuplicateUserName");
+                    {
+                        _badRequests.Add(BadRequest("DuplicateUserName"));
+                        return false;
+                    }
 
                     if (ModelState.IsValid) // Does check with the DataAnnotations if its true we do all other checks that the database couldnt handle.
-                    {
-
                         Accounts.Add(acc);
-                        return CreatedAtRoute("GetAcc", new { id = acc.Id }, acc);
-
-                        //return Ok();
-                    }
-
                     else
                     {
-                        //Accounts.Add(acc);
-                        //return Created(acc.Id, acc);
-                        return BadRequest();
+                        _badRequests.Add(BadRequest("ModelStateNotValid"));
+                        return false;
                     }
-
                 }
-
+                return true;
             }
+        }
+
+        [HttpPost]
+        public IActionResult Create([FromBody] Account acc)
+        {
+            if (CheckInputs(acc))
+                return CreatedAtRoute("GetAcc", new { id = acc.Id }, acc);
+
+            else return BadRequest(_badRequests.Any());
+            
         }
                 
             /*
