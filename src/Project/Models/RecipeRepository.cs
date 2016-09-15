@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using Project.Models;
 using Project.SQL_Database;
 
+
 namespace Project.Models
 {
     public class RecipeRepository : IRecipe
@@ -23,13 +24,14 @@ namespace Project.Models
             int id;
             do
             {
-                id = Guid.NewGuid().GetHashCode();
+                id = Guid.NewGuid().GetHashCode(); //Returns numbers from GUID
                 if (id < 0)
                     id *= -1;
                 recep.Id = id;
-
-            } while (_context.Recipes.Any(h => h.Id == id));
+                recep.Created = generateUnixTimestamp(); 
+            } while (_context.Recipes.Any(h => h.Id == id)); //Loops as long as the existing row's id is the same as the newly generated one
             _context.Recipes.Add(recep);
+
             _context.SaveChanges();
         }
 
@@ -52,10 +54,18 @@ namespace Project.Models
             t.Id = recep.Id;
             t.Image = recep.Image;
             t.Description = recep.Description;
-            t.Created = recep.Created;
-            t.AccountId = recep.AccountId;
+            t.Created = generateUnixTimestamp();
             _context.SaveChanges();
-            
+        }
+
+
+        /// <summary>
+        /// Gives number of seconds between current time and 1970/01/01
+        /// </summary>
+        /// <returns></returns>
+        private Int32 generateUnixTimestamp()
+        {
+            return (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
         }
     }
 }

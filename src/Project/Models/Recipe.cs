@@ -25,7 +25,7 @@ namespace Project.Models
         public string Image { get; set; }
         public int Created { get; set; }
 
-        public string AccountId{get;set;}
+        public string AccountId {get;set;}
 
         public ICollection<Comment> Comments { get; set; } 
         public ICollection<Direction> Directions { get; set; } 
