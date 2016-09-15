@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Project.Migrations
 {
-    public partial class DbMigration : Migration
+    public partial class test : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -27,8 +27,7 @@ namespace Project.Migrations
                 name: "Recipes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Id = table.Column<int>(nullable: false),
                     AccountId = table.Column<string>(nullable: true),
                     Created = table.Column<int>(nullable: false),
                     Description = table.Column<string>(maxLength: 300, nullable: false),
@@ -74,8 +73,7 @@ namespace Project.Migrations
                 name: "Comments",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Id = table.Column<int>(nullable: false),
                     AccountId = table.Column<int>(nullable: false),
                     AccountId1 = table.Column<string>(nullable: true),
                     Created = table.Column<int>(nullable: false),

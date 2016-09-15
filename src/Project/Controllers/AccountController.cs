@@ -25,7 +25,7 @@ namespace Project.Controllers
         }
         public IAccount Accounts { get; set; }
 
-        [HttpGet("GetAll")]
+        [HttpGet]
         public IEnumerable<Account> GetAll()
         {
             return Accounts.GetAll();
@@ -40,48 +40,6 @@ namespace Project.Controllers
             if (item == null)
                 return NotFound();
             return new ObjectResult(item);
-        }
-
-        private bool CheckInputs(Account acc)
-        {
-            if (acc == null)
-            {
-                _badRequests.Add(BadRequest("NullAccount"));
-                return false;
-            }
-
-            if (acc.UserName == null)
-            {
-                _badRequests.Add(BadRequest("UserNameMissing"));
-                return false;
-            }
-
-            else
-            {
-                if (Accounts.GetAll() == null)
-                {
-                    Accounts.Add(acc);
-                    return true;
-                }
-
-                else
-                {
-                    if (Accounts.FindUser(acc.UserName) != null)
-                    {
-                        _badRequests.Add(BadRequest("DuplicateUserName"));
-                        return false;
-                    }
-
-                    if (ModelState.IsValid) // Does check with the DataAnnotations if its true we do all other checks that the database couldnt handle.
-                        Accounts.Add(acc);
-                    else
-                    {
-                        _badRequests.Add(BadRequest("ModelStateNotValid"));
-                        return false;
-                    }
-                }
-                return true;
-            }
         }
 
         [HttpPost]
@@ -130,6 +88,51 @@ namespace Project.Controllers
 
             Accounts.Remove(id);
             return new NoContentResult();
+        }
+        private bool CheckInputs(Account acc)
+        {
+            if (acc == null)
+            {
+                _badRequests.Add(BadRequest("NullAccount"));
+                return false;
+            }
+
+            if (acc.UserName == null)
+            {
+                _badRequests.Add(BadRequest("UserNameMissing"));
+                return false;
+            }
+
+            else
+            {
+                if (Accounts.GetAll() == null)
+                {
+                    Accounts.Add(acc);
+                    return true;
+                }
+
+                else
+                {
+                    
+                    if (Accounts.FindUser(acc.UserName) != null)
+                    {
+                        _badRequests.Add(BadRequest("DuplicateUserName"));
+                        return false;
+                    }
+
+                    if (ModelState.IsValid) // Does check with the DataAnnotations if its true we do all other checks that the database couldnt handle.
+
+
+
+                        Accounts.Add(acc);
+                    else
+                    {
+                        _badRequests.Add(BadRequest("ModelStateNotValid"));
+                        return false;
+                    }
+                }
+                return true;
+            }
         }
     }
 }

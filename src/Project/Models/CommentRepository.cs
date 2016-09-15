@@ -4,47 +4,58 @@ using System.Linq;
 using System.Threading.Tasks;
 using Project.Models.Interfaces;
 using System.Collections.Concurrent;
+using Project.SQL_Database;
 
 namespace Project.Models
 {
     public class CommentRepository : IComment
     {
-        private static ConcurrentDictionary<int, Comment> _comm =
-      new ConcurrentDictionary<int, Comment>();
 
-        public CommentRepository()
-        {
-            Add(new Comment { Id = 0 });
-        }
+        private MyDbContext _context = new MyDbContext();
+      
 
         public IEnumerable<Comment> GetAll()
         {
-            return _comm.Values;
+            return _context.Comments;
         }
 
         public void Add(Comment comm)
         {
-            comm.Id = 0;
-            _comm[comm.Id] = comm;
+            int id;
+            do
+            {
+                id = Guid.NewGuid().GetHashCode(); //Returns numbers from GUID
+                if (id < 0)
+                    id *= -1;
+                comm.Id = id;
+                comm.Created = RecipeRepository.generateUnixTimestamp();
+            } while (_context.Comments.Any(h => h.Id == id)); //Loops as long as the existing row's id is the same as the newly generated one
+
+            _context.Comments.Add(comm);
+            _context.SaveChanges();
         }
 
         public Comment Find(int id)
         {
-            Comment comm;
-            _comm.TryGetValue(id, out comm);
-            return comm;
+            return _context.Comments.First(_id=>_id.Id == id);
+            
         }
 
-        public Comment Remove(int id)
+        public void Remove(int id)
         {
-            Comment comm;
-            _comm.TryRemove(id, out comm);
-            return comm;
+            _context.Comments.Remove(Find(id));
+            _context.SaveChanges();
+            
         }
 
         public void Update(Comment comm)
         {
-            _comm[comm.Id] = comm;
+            var _comm = Find(comm.Id);
+            _comm.Id = comm.Id;
+            _comm.Text = comm.Text;
+            _comm.Grade = comm.Grade;
+            _comm.Image = comm.Image;
+            _comm.Created = comm.Created;
         }
     }
 }

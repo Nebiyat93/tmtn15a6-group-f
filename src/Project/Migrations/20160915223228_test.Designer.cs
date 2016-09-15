@@ -8,8 +8,8 @@ using Project.SQL_Database;
 namespace Project.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20160914140641_DbMigration")]
-    partial class DbMigration
+    [Migration("20160915223228_test")]
+    partial class test
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -51,8 +51,7 @@ namespace Project.Migrations
 
             modelBuilder.Entity("Project.Models.Comment", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("Id");
 
                     b.Property<int>("AccountId");
 
@@ -102,8 +101,7 @@ namespace Project.Migrations
 
             modelBuilder.Entity("Project.Models.Recipe", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("Id");
 
                     b.Property<string>("AccountId");
 

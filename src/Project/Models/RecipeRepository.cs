@@ -63,7 +63,7 @@ namespace Project.Models
         /// Gives number of seconds between current time and 1970/01/01
         /// </summary>
         /// <returns></returns>
-        private Int32 generateUnixTimestamp()
+        public static Int32 generateUnixTimestamp()
         {
             return (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
         }

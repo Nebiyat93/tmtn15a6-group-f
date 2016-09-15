@@ -50,8 +50,7 @@ namespace Project.Migrations
 
             modelBuilder.Entity("Project.Models.Comment", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("Id");
 
                     b.Property<int>("AccountId");
 
@@ -101,8 +100,7 @@ namespace Project.Migrations
 
             modelBuilder.Entity("Project.Models.Recipe", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("Id");
 
                     b.Property<string>("AccountId");
 

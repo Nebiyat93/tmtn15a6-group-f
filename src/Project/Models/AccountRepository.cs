@@ -10,16 +10,13 @@ namespace Project.Models
 {
     public class AccountRepository : IAccount
     {
-        private static ConcurrentDictionary<string, Account> _accs =
-            new ConcurrentDictionary<string, Account>();
+       
 
         private MyDbContext _context = new MyDbContext();
 
         public IEnumerable<Account> GetAll()
         {
-            var acc = _context.Accounts;
-
-            return acc;
+            return _context.Accounts;
         }
 
         public void Add(Account acc)
@@ -32,30 +29,27 @@ namespace Project.Models
 
         public Account Find(string id)
         {
-            
-            var _acc = _context.Accounts.First(p => p.Id == id);
-            return _acc;
-          
+            return _context.Accounts.First(p => p.Id == id);
         }
 
         public Account FindUser(string UserName)
         {
-
-            var _acc = _context.Accounts.FirstOrDefault(p => p.UserName == UserName);
-            return _acc;
-
+            return _context.Accounts.FirstOrDefault(p => p.UserName == UserName);
         }
 
-        public Account Remove(string Id)
+        public void Remove(string Id)
         {
-            Account acc;
-            _accs.TryRemove(Id, out acc);
-            return acc;
+            _context.Remove(Find(Id));
+            _context.SaveChanges();
         }
 
         public void Update(Account acc)
         {
-            _accs[acc.Id] = acc;
+            var _acc = _context.Accounts.Where(h => h.Id == acc.Id).First();
+            _acc.UserName = acc.UserName;
+            _acc.Id = acc.Id;
+            _acc.Latitude = acc.Latitude;
+            _acc.Longitude = acc.Longitude;
             _context.SaveChanges();
         }
     }
