@@ -35,9 +35,15 @@ namespace Project.Models
             
             var _acc = _context.Accounts.First(p => p.Id == id);
             return _acc;
-            
+          
+        }
 
-           
+        public Account FindUser(string UserName)
+        {
+
+            var _acc = _context.Accounts.FirstOrDefault(p => p.UserName == UserName);
+            return _acc;
+
         }
 
         public Account Remove(string Id)

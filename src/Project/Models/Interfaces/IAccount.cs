@@ -8,6 +8,7 @@ namespace Project.Models.Interfaces
         void Add(Account acc);
         IEnumerable<Account> GetAll();
         Account Find(string Id);
+        Account FindUser(string UserName);
         Account Remove(string Id);
         void Update(Account acc);
     }
