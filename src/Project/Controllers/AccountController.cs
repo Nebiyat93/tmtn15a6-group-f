@@ -14,10 +14,8 @@ namespace Project.Controllers
     [Route("api/v1/[controller]")]
     public class AccountController : Controller
     {
-        private MyDbContext _context = new MyDbContext();
         public static List<Account> m_Accounts = new List<Account>();
         private List<BadRequestObjectResult> _badRequests = new List<BadRequestObjectResult>();
-
 
         public AccountController(IAccount acc)
         {
@@ -25,13 +23,11 @@ namespace Project.Controllers
         }
         public IAccount Accounts { get; set; }
 
-        [HttpGet]
+        [HttpGet("GetAll")]
         public IEnumerable<Account> GetAll()
         {
             return Accounts.GetAll();
         }
-
-
 
         [HttpGet("{id}", Name = "GetAcc")]
         public IActionResult GetById(string Id)
@@ -45,19 +41,18 @@ namespace Project.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] Account acc)
         {
-            if (CheckInputs(acc))
-                return CreatedAtRoute("GetAcc", new { id = acc.Id }, acc);
-
-            else return BadRequest(_badRequests.Any());
-            
-        }
-                
-            /*
-            else (errors != "")
+            try
             {
-                    return BadRequest("errors:" + errors);
-                }
-            }*/
+                if (CheckInputs(acc))
+                    return CreatedAtRoute("GetAcc", new { id = acc.Id }, acc);
+                else
+                    return BadRequest(_badRequests.Select(p => p.Value.ToString())); //Returns every error from _badRequests as an array/list
+            }
+            finally
+            {
+                _badRequests.Clear();
+            }
+        }
 
         [HttpPut("{id}")]
         public IActionResult Update(string id, [FromBody] Account acc)
@@ -113,17 +108,12 @@ namespace Project.Controllers
 
                 else
                 {
-                    
                     if (Accounts.FindUser(acc.UserName) != null)
                     {
                         _badRequests.Add(BadRequest("DuplicateUserName"));
                         return false;
                     }
-
                     if (ModelState.IsValid) // Does check with the DataAnnotations if its true we do all other checks that the database couldnt handle.
-
-
-
                         Accounts.Add(acc);
                     else
                     {
