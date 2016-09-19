@@ -10,8 +10,6 @@ namespace Project.Models
     {
 
         private MyDbContext _context = new MyDbContext();
-      
-
         public IEnumerable<Comment> GetAll()
         {
             return _context.Comments;
