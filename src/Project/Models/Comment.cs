@@ -14,21 +14,21 @@ namespace Project.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         [Required]
-        [MaxLength(400)][ MinLength(10)]
+        [MaxLength(400)][MinLength(10)]
         public string Text { get; set; }
         [Required]
+        [Range(1, 5)]
         public int Grade { get; set; }
         [MaxLength(200)][MinLength(0)]
         public string Image { get; set; }
         [Required]
-        [Range(1,5)]
         public int Created { get; set; } 
         [Required]
         public int AccountId { get; set; }
         [Required]
         public int RecipeId { get; set; }
 
-        public Account Account { get; set; } 
-        public Recipe Recipe { get; set; }
+        public virtual Account Account { get; set; } 
+        public virtual Recipe Recipe { get; set; }
     }
 }

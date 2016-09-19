@@ -18,7 +18,7 @@ namespace Project.Controllers
         }
         public IComment Comments { get; set; }
 
-        [HttpGet]
+        [HttpGet("GetAll")]
         public IEnumerable<Comment> GetAll()
         {
             return Comments.GetAll();
@@ -36,12 +36,23 @@ namespace Project.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] Comment comm)
         {
-            if (comm == null)
+
+            if (ModelState.IsValid)
+            {
+                if (string.IsNullOrWhiteSpace((comm.Text)))
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    Comments.Add(comm);
+                    return CreatedAtRoute("GetComm", new { id = comm.Id }, comm);
+                }
+            }else
             {
                 return BadRequest();
             }
-            Comments.Add(comm);
-            return CreatedAtRoute("GetComm", new { id = comm.Id }, comm);
+            
         }
 
         [HttpPut("{id}")]

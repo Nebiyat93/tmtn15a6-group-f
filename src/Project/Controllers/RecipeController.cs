@@ -19,7 +19,7 @@ namespace Project.Controllers
         }
         public IRecipe Recipes { get; set; }
 
-        [HttpGet]
+        [HttpGet("GetAll")]
         public IEnumerable<Recipe> GetAll()
         {
             return Recipes.GetAll();
