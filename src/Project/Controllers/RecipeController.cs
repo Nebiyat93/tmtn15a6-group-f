@@ -52,7 +52,7 @@ namespace Project.Controllers
             if (newRecipe == null || oldRecipe.Id != id)
                 return NotFound();
 
-            if (oldRecipe == null)
+            else if (oldRecipe == null)
                 return NotFound();
 
             Recipes.Update(newRecipe, oldRecipe);

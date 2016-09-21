@@ -10,6 +10,8 @@ namespace Project.Models.Interfaces
         Account Find(string Id);
         Account FindUser(string UserName);
         void Remove(string Id);
+        void RemoveComments(string Id);
+        void RemoveRecipies(string Id);
         void Update(Account acc);
     }
 }

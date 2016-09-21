@@ -14,8 +14,8 @@ namespace Project.Controllers
     [Route("api/v1/[controller]")]
     public class AccountController : Controller
     {
-        public static List<Account> m_Accounts = new List<Account>();
-        private List<BadRequestObjectResult> _badRequests = new List<BadRequestObjectResult>();
+
+        private List<string> _Errors = new List<string>();
 
         public AccountController(IAccount acc)
         {
@@ -35,34 +35,36 @@ namespace Project.Controllers
             var item = Accounts.Find(Id);
             if (item == null)
                 return NotFound();
-            return new ObjectResult(item);
+            return Ok(item);
         }
 
         [HttpPost]
         public IActionResult Create([FromBody] Account acc)
         {
-                if (CheckInputs(acc))
-                    return CreatedAtRoute("GetAcc", new { id = acc.Id }, acc);
-                else
-                    return BadRequest(_badRequests.Select(p => p.Value.ToString())); //Returns every error from _badRequests as an array/list
+            if (CheckInputs(acc))
+                return CreatedAtRoute("GetAcc", new { id = acc.Id }, acc);
+            else
+                return BadRequest(new { errors = _Errors });
         }
 
         [HttpPut("{id}")]
         public IActionResult Update(string id, [FromBody] Account acc)
         {
-            if (acc == null || acc.Id != id)
+            if (acc.Longitude == null || acc.Latitude == null)
+                return NoContent();
+            else
             {
-                return BadRequest();
+                var oldAcc = Accounts.Find(id);
+                if (acc == null || oldAcc.Id != id)
+                    return NotFound();
+
+                else if (oldAcc == null)
+                    return NotFound();
+
+                Accounts.Update(acc);
+                return new NoContentResult();
             }
 
-            var p = Accounts.Find(id);
-            if (p == null)
-            {
-                return NotFound();
-            }
-
-            Accounts.Update(acc);
-            return new NoContentResult();
         }
 
         [HttpDelete("{id}")]
@@ -70,9 +72,10 @@ namespace Project.Controllers
         {
             var acc = Accounts.Find(id);
             if (acc == null)
-            {
                 return NotFound();
-            }
+
+            if (acc.Comments != null)
+                acc.Comments.a
 
             Accounts.Remove(id);
             return new NoContentResult();
@@ -80,42 +83,47 @@ namespace Project.Controllers
         private bool CheckInputs(Account acc)
         {
             if (acc == null)
-            {
-                _badRequests.Add(BadRequest("NullAccount"));
                 return false;
-            }
 
             if (acc.UserName == null)
-            {
-                _badRequests.Add(BadRequest("UserNameMissing"));
-                return false;
-            }
+                _Errors.Add("UserNameMissing");
+            if (acc.UserName.Contains(" "))
+                _Errors.Add("InvalidUserName");
+            if (acc.Longitude == null)
+                _Errors.Add("LongitudeMissing");
+            if (acc.Latitude == null)
+                _Errors.Add("LatitudeMissing");
+            if (acc.Password == null)
+                _Errors.Add("PasswordMissing");
+            if (acc.Password.Length < 6)
+                _Errors.Add("PasswordTooShort");
+            //System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("^[a-zA-Z][a-zA-Z0-9]*$");
+            //if (regex.IsMatch(acc.Password))
+            //    _badRequests.Add(BadRequest("PasswordRequiresNonAlphanumeric"));
+            if (acc.Password.All(p => char.IsUpper(p)))
+                _Errors.Add("RequiresUppercase");
+            if (acc.Password.All(p => char.IsLower(p)))
+                _Errors.Add("RequiresLowerCase");
 
             else
-            {
-                if (Accounts.GetAll() == null)
-                {
+            {   
+                if (!Accounts.GetAll().Any())
                     Accounts.Add(acc);
-                    return true;
-                }
-
                 else
                 {
                     if (Accounts.FindUser(acc.UserName) != null)
                     {
-                        _badRequests.Add(BadRequest("DuplicateUserName"));
+                        _Errors.Add("DuplicateUserName");
                         return false;
                     }
                     if (ModelState.IsValid) // Does check with the DataAnnotations if its true we do all other checks that the database couldnt handle.
                         Accounts.Add(acc);
                     else
-                    {
-                        _badRequests.Add(BadRequest("ModelStateNotValid"));
                         return false;
-                    }
                 }
                 return true;
             }
+            return false;
         }
     }
 }

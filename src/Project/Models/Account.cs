@@ -19,12 +19,14 @@ namespace Project.Models
         [Required]
         [MaxLength(12)][MinLength(1)]
         public string UserName { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+        [Required]
+        [MinLength(6)]
+        public string Password { get; set; }
 
         public ICollection<Comment> Comments { get; set; } 
         public ICollection<Recipe> Recipes { get; set; } 
-        public ICollection<AccountRecipe> AccountRecipes {get; set;}
-
+        public ICollection<AccountRecipe> AccountRecipes {  get; set;  }
     }
 }

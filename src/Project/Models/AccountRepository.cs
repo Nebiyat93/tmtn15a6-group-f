@@ -10,8 +10,7 @@ namespace Project.Models
 {
     public class AccountRepository : IAccount
     {
-       
-
+      
         private MyDbContext _context = new MyDbContext();
 
         public IEnumerable<Account> GetAll()
@@ -22,7 +21,6 @@ namespace Project.Models
         public void Add(Account acc)
         {
             acc.Id = Guid.NewGuid().ToString(); // generate new id
-            //_accs[acc.Id] = acc;
             _context.Accounts.Add(acc);
             _context.SaveChanges();
         }
@@ -41,6 +39,19 @@ namespace Project.Models
         {
             _context.Remove(Find(Id));
             _context.SaveChanges();
+        }
+
+        public void RemoveComments(string Id)
+        {
+            var p = _context.Comments.Where(w => w.AccountId == Id);
+            foreach (var item in p)
+                _context.Remove(item);
+            _context.SaveChanges();
+        }
+
+        public void RemoveRecipies(int Id)
+        {
+            var p = _context.Accounts.Where(w => w.AccountRecipes.Where(h => h.RecipeId == Id));
         }
 
         public void Update(Account acc)

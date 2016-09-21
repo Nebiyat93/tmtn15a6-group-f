@@ -12,8 +12,7 @@ namespace Project.Models
         public Recipe()
         {
             Comments = new HashSet<Comment>();
-            Directions = new HashSet<Direction>();
-            
+            Directions = new HashSet<Direction>(); 
         }
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]

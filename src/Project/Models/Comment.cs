@@ -24,7 +24,7 @@ namespace Project.Models
         [Required]
         public int Created { get; set; } 
         [Required]
-        public int AccountId { get; set; }
+        public string AccountId { get; set; }
         [Required]
         public int RecipeId { get; set; }
 

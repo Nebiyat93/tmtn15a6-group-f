@@ -8,7 +8,7 @@ using Project.SQL_Database;
 namespace Project.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20160921055409_DbMigration")]
+    [Migration("20160921142336_DbMigration")]
     partial class DbMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,9 +21,12 @@ namespace Project.Migrations
                 {
                     b.Property<string>("Id");
 
-                    b.Property<double>("Latitude");
+                    b.Property<double?>("Latitude");
 
-                    b.Property<double>("Longitude");
+                    b.Property<double?>("Longitude");
+
+                    b.Property<string>("Password")
+                        .IsRequired();
 
                     b.Property<string>("UserName")
                         .IsRequired()
@@ -53,9 +56,8 @@ namespace Project.Migrations
                 {
                     b.Property<int>("Id");
 
-                    b.Property<int>("AccountId");
-
-                    b.Property<string>("AccountId1");
+                    b.Property<string>("AccountId")
+                        .IsRequired();
 
                     b.Property<int>("Created");
 
@@ -72,7 +74,7 @@ namespace Project.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId1");
+                    b.HasIndex("AccountId");
 
                     b.HasIndex("RecipeId");
 
@@ -142,7 +144,8 @@ namespace Project.Migrations
                 {
                     b.HasOne("Project.Models.Account", "Account")
                         .WithMany("Comments")
-                        .HasForeignKey("AccountId1");
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Project.Models.Recipe", "Recipe")
                         .WithMany("Comments")

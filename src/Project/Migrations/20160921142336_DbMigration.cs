@@ -14,8 +14,9 @@ namespace Project.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
-                    Latitude = table.Column<double>(nullable: false),
-                    Longitude = table.Column<double>(nullable: false),
+                    Latitude = table.Column<double>(nullable: true),
+                    Longitude = table.Column<double>(nullable: true),
+                    Password = table.Column<string>(nullable: false),
                     UserName = table.Column<string>(maxLength: 12, nullable: false)
                 },
                 constraints: table =>
@@ -74,8 +75,7 @@ namespace Project.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false),
-                    AccountId = table.Column<int>(nullable: false),
-                    AccountId1 = table.Column<string>(nullable: true),
+                    AccountId = table.Column<string>(nullable: false),
                     Created = table.Column<int>(nullable: false),
                     Grade = table.Column<int>(nullable: false),
                     Image = table.Column<string>(maxLength: 200, nullable: true),
@@ -86,11 +86,11 @@ namespace Project.Migrations
                 {
                     table.PrimaryKey("PK_Comments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Comments_Accounts_AccountId1",
-                        column: x => x.AccountId1,
+                        name: "FK_Comments_Accounts_AccountId",
+                        column: x => x.AccountId,
                         principalTable: "Accounts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Comments_Recipes_RecipeId",
                         column: x => x.RecipeId,
@@ -131,9 +131,9 @@ namespace Project.Migrations
                 column: "RecipeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comments_AccountId1",
+                name: "IX_Comments_AccountId",
                 table: "Comments",
-                column: "AccountId1");
+                column: "AccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_RecipeId",
