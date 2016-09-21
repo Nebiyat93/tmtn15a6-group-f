@@ -8,8 +8,8 @@ using Project.SQL_Database;
 namespace Project.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20160915223228_test")]
-    partial class test
+    [Migration("20160921055409_DbMigration")]
+    partial class DbMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

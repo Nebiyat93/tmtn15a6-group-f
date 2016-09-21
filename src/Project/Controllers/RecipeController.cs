@@ -46,20 +46,16 @@ namespace Project.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] Recipe recep)
+        public IActionResult Update(int id, [FromBody] Recipe newRecipe)
         {
-            if (recep == null || recep.Id != id)
-            {
-                return BadRequest();
-            }
-
-            var p = Recipes.Find(id);
-            if (p == null)
-            {
+            var oldRecipe = Recipes.Find(id);
+            if (newRecipe == null || oldRecipe.Id != id)
                 return NotFound();
-            }
 
-            Recipes.Update(recep);
+            if (oldRecipe == null)
+                return NotFound();
+
+            Recipes.Update(newRecipe, oldRecipe);
             return new NoContentResult();
         }
 

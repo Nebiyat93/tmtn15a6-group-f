@@ -31,7 +31,6 @@ namespace Project.Models
                 recep.Created = generateUnixTimestamp(); 
             } while (_context.Recipes.Any(h => h.Id == id)); //Loops as long as the existing row's id is the same as the newly generated one
             _context.Recipes.Add(recep);
-
             _context.SaveChanges();
         }
 
@@ -47,11 +46,15 @@ namespace Project.Models
             _context.SaveChanges();
         }
 
-        public void Update(Recipe recep)
+        public void Update(Recipe newRecipe, Recipe oldRecipe)
         {
+            _context.Attach(oldRecipe);
+            if (oldRecipe.Name != newRecipe.Name)
+                oldRecipe.Name = newRecipe.Name;
+            if (oldRecipe.Description != newRecipe.Description)
+                oldRecipe.Description = newRecipe.Description;
             var t = _context.Recipes.Where(h => h.Id == recep.Id).First();
             t.Name = recep.Name;
-            t.Id = recep.Id;
             t.Image = recep.Image;
             t.Description = recep.Description;
             t.Created = generateUnixTimestamp();

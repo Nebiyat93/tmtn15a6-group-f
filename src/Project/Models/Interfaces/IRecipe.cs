@@ -7,7 +7,7 @@ namespace Project.Models.Interfaces
     {
         Recipe Find(int Id);
         void Remove(int Id);
-        void Update(Recipe recp);
+        void Update(Recipe oldRecipe, Recipe newRecipe);
         void Add(Recipe recp);
         IEnumerable<Recipe> GetAll();
     }

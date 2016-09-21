@@ -41,17 +41,10 @@ namespace Project.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] Account acc)
         {
-            try
-            {
                 if (CheckInputs(acc))
                     return CreatedAtRoute("GetAcc", new { id = acc.Id }, acc);
                 else
                     return BadRequest(_badRequests.Select(p => p.Value.ToString())); //Returns every error from _badRequests as an array/list
-            }
-            finally
-            {
-                _badRequests.Clear();
-            }
         }
 
         [HttpPut("{id}")]

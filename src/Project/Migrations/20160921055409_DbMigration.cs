@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Project.Migrations
 {
-    public partial class test : Migration
+    public partial class DbMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
