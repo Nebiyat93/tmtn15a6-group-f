@@ -48,16 +48,12 @@ namespace Project.Models
 
         public void Update(Recipe newRecipe, Recipe oldRecipe)
         {
-            _context.Attach(oldRecipe);
-            if (oldRecipe.Name != newRecipe.Name)
+            if (newRecipe.Name != null)
                 oldRecipe.Name = newRecipe.Name;
-            if (oldRecipe.Description != newRecipe.Description)
+            if (newRecipe.Description != null)
                 oldRecipe.Description = newRecipe.Description;
-            var t = _context.Recipes.Where(h => h.Id == recep.Id).First();
-            t.Name = recep.Name;
-            t.Image = recep.Image;
-            t.Description = recep.Description;
-            t.Created = generateUnixTimestamp();
+            if (newRecipe.Created != 0)
+                oldRecipe.Created = generateUnixTimestamp();
             _context.SaveChanges();
         }
 
