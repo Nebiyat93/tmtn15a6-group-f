@@ -131,12 +131,12 @@ namespace Project.Migrations
                     b.HasOne("Project.Models.Account", "Account")
                         .WithMany("AccountRecipes")
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Project.Models.Recipe", "Recipe")
                         .WithMany("AccountRecipes")
                         .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("Project.Models.Comment", b =>
@@ -144,12 +144,12 @@ namespace Project.Migrations
                     b.HasOne("Project.Models.Account", "Account")
                         .WithMany("Comments")
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Project.Models.Recipe", "Recipe")
                         .WithMany("Comments")
                         .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("Project.Models.Direction", b =>
@@ -157,14 +157,15 @@ namespace Project.Migrations
                     b.HasOne("Project.Models.Recipe", "Recipe")
                         .WithMany("Directions")
                         .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("Project.Models.Recipe", b =>
                 {
                     b.HasOne("Project.Models.Account", "Account")
                         .WithMany("Recipes")
-                        .HasForeignKey("AccountId");
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
         }
     }

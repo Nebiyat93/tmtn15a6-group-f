@@ -8,7 +8,7 @@ using Project.SQL_Database;
 namespace Project.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20160921142336_DbMigration")]
+    [Migration("20160922083316_DbMigration")]
     partial class DbMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -132,12 +132,12 @@ namespace Project.Migrations
                     b.HasOne("Project.Models.Account", "Account")
                         .WithMany("AccountRecipes")
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Project.Models.Recipe", "Recipe")
                         .WithMany("AccountRecipes")
                         .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("Project.Models.Comment", b =>
@@ -145,12 +145,12 @@ namespace Project.Migrations
                     b.HasOne("Project.Models.Account", "Account")
                         .WithMany("Comments")
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Project.Models.Recipe", "Recipe")
                         .WithMany("Comments")
                         .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("Project.Models.Direction", b =>
@@ -158,14 +158,15 @@ namespace Project.Migrations
                     b.HasOne("Project.Models.Recipe", "Recipe")
                         .WithMany("Directions")
                         .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("Project.Models.Recipe", b =>
                 {
                     b.HasOne("Project.Models.Account", "Account")
                         .WithMany("Recipes")
-                        .HasForeignKey("AccountId");
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
         }
     }
