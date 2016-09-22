@@ -15,7 +15,7 @@ namespace Project.Models
 
         public IEnumerable<Account> GetAll()
         {
-            return _context.Accounts;
+            return _context.Database;
         }
 
         public void Add(Account acc)

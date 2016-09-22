@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Project.Models.Interfaces;
 using Project.Models;
+using Project.SQL_Database;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Project
 {
@@ -39,6 +41,9 @@ namespace Project
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
 
+            services.AddIdentity<MyDbContext, IdentityRole>().
+                AddEntityFrameworkStores<MyDbContext>();
+
             services.AddMvc();
 
             services.AddSingleton<IAccount, AccountRepository>();
@@ -52,6 +57,8 @@ namespace Project
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            app.UseIdentity();
 
             app.UseApplicationInsightsRequestTelemetry();
 

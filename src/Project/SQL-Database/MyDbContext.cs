@@ -5,10 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Project.Models;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Project.SQL_Database
 {
-    public class MyDbContext : DbContext
+    public class MyDbContext : IdentityDbContext<Account>
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -35,8 +36,7 @@ namespace Project.SQL_Database
 
             modelBuilder.Entity<Direction>().HasOne(pt => pt.Recipe).WithMany(d => d.Directions).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.RecipeId);
         }
-
-        public DbSet<Account> Accounts { get; set; }
+        
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Direction> Directions { get; set; }

@@ -7,6 +7,7 @@ using Project.Models.Interfaces;
 using Project.Models;
 using Project.SQL_Database;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Identity;
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Project.Controllers
@@ -16,10 +17,12 @@ namespace Project.Controllers
     {
 
         private List<string> _Errors = new List<string>();
+        private readonly UserManager<Account> _userManager;
 
-        public AccountController(IAccount acc)
+        public AccountController(IAccount acc, UserManager<Account> userManager)
         {
             Accounts = acc;
+            _userManager = userManager; 
         }
         public IAccount Accounts { get; set; }
 
@@ -39,12 +42,17 @@ namespace Project.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] Account acc)
+        public async Task<IActionResult> Create([FromBody] Account acc)
         {
-            if (CheckInputs(acc))
-                return CreatedAtRoute("GetAcc", new { id = acc.Id }, acc);
-            else
-                return BadRequest(new { errors = _Errors });
+            var res = await _userManager.CreateAsync(acc, acc.PasswordHash);
+            return Ok();
+
+            //if (CheckInputs(acc))
+            //    return CreatedAtRoute("GetAcc", new { id = acc.Id }, acc);
+            //else
+            //    return BadRequest(new { errors = _Errors });
+
+            
         }
 
         [HttpPut("{id}")]
@@ -54,7 +62,7 @@ namespace Project.Controllers
                 return NoContent();
             else
             {
-                var oldAcc = Accounts.Find(id);
+                var oldAcc = Accounts.Find  (id);
                 if (acc == null || oldAcc.Id != id)
                     return NotFound();
 
@@ -64,7 +72,6 @@ namespace Project.Controllers
                 Accounts.Update(acc);
                 return new NoContentResult();
             }
-
         }
 
         [HttpDelete("{id}")]
@@ -93,17 +100,6 @@ namespace Project.Controllers
                 _Errors.Add("LongitudeMissing");
             if (acc.Latitude == null)
                 _Errors.Add("LatitudeMissing");
-            if (acc.Password == null)
-                _Errors.Add("PasswordMissing");
-            if (acc.Password.Length < 6)
-                _Errors.Add("PasswordTooShort");
-            //System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("^[a-zA-Z][a-zA-Z0-9]*$");
-            //if (regex.IsMatch(acc.Password))
-            //    _badRequests.Add(BadRequest("PasswordRequiresNonAlphanumeric"));
-            if (acc.Password.All(p => char.IsUpper(p)))
-                _Errors.Add("RequiresUppercase");
-            if (acc.Password.All(p => char.IsLower(p)))
-                _Errors.Add("RequiresLowerCase");
 
             else
             {   
@@ -113,7 +109,7 @@ namespace Project.Controllers
                 {
                     if (Accounts.FindUser(acc.UserName) != null)
                     {
-                        _Errors.Add("DuplicateUserName");
+                        _Errors.Add("DuplicateUserName  ");
                         return false;
                     }
                     if (ModelState.IsValid) // Does check with the DataAnnotations if its true we do all other checks that the database couldnt handle.
