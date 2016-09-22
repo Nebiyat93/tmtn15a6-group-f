@@ -130,42 +130,36 @@ namespace Project.Migrations
                 {
                     b.HasOne("Project.Models.Account", "Account")
                         .WithMany("AccountRecipes")
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("AccountId");
 
                     b.HasOne("Project.Models.Recipe", "Recipe")
                         .WithMany("AccountRecipes")
-                        .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("RecipeId");
                 });
 
             modelBuilder.Entity("Project.Models.Comment", b =>
                 {
                     b.HasOne("Project.Models.Account", "Account")
                         .WithMany("Comments")
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("AccountId");
 
                     b.HasOne("Project.Models.Recipe", "Recipe")
                         .WithMany("Comments")
-                        .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("RecipeId");
                 });
 
             modelBuilder.Entity("Project.Models.Direction", b =>
                 {
                     b.HasOne("Project.Models.Recipe", "Recipe")
                         .WithMany("Directions")
-                        .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("RecipeId");
                 });
 
             modelBuilder.Entity("Project.Models.Recipe", b =>
                 {
                     b.HasOne("Project.Models.Account", "Account")
                         .WithMany("Recipes")
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("AccountId");
                 });
         }
     }
