@@ -75,7 +75,7 @@ namespace Project.Controllers
                 return NotFound();
 
             if (acc.Comments != null)
-                acc.Comments.a
+                
 
             Accounts.Remove(id);
             return new NoContentResult();

@@ -41,19 +41,6 @@ namespace Project.Models
             _context.SaveChanges();
         }
 
-        public void RemoveComments(string Id)
-        {
-            var p = _context.Comments.Where(w => w.AccountId == Id);
-            foreach (var item in p)
-                _context.Remove(item);
-            _context.SaveChanges();
-        }
-
-        public void RemoveRecipies(int Id)
-        {
-            var p = _context.Accounts.Where(w => w.AccountRecipes.Where(h => h.RecipeId == Id));
-        }
-
         public void Update(Account acc)
         {
             var _acc = _context.Accounts.Where(h => h.Id == acc.Id).First();
