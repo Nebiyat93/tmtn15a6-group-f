@@ -19,7 +19,6 @@ namespace Project.Models
 
         public void Add(Account acc)
         {
-            acc.Id = Guid.NewGuid().ToString(); // generate new id
             _context.Accounts.Add(acc);
             _context.SaveChanges();
         }

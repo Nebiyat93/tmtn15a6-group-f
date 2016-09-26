@@ -19,6 +19,8 @@ namespace Project.SQL_Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Account>().HasMany(pt => pt.Comments).WithOne(c => c.Account).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Account>().HasMany(pt => pt.Recipes).WithOne(r => r.Account).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Account>().HasMany(pt => pt.AccountRecipes).WithOne(pt => pt.Account).OnDelete(DeleteBehavior.Cascade);
