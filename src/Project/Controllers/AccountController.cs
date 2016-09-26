@@ -15,14 +15,17 @@ namespace Project.Controllers
     [Route("api/v1/[controller]")]
     public class AccountController : Controller
     {
-
         private List<string> _Errors = new List<string>();
         private readonly UserManager<Account> _userManager;
+        private readonly SignInManager<Account> _signInManager;
 
-        public AccountController(IAccount acc, UserManager<Account> userManager)
+        public AccountController(IAccount acc, 
+            UserManager<Account> userManager,
+            SignInManager<Account> signInManager)
         {
             Accounts = acc;
-            _userManager = userManager; 
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
         public IAccount Accounts { get; set; }
 
@@ -44,7 +47,7 @@ namespace Project.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Account acc)
         {
-            var res = await _userManager.CreateAsync(acc, acc.PasswordHash);
+            var user = new Account { UserName = acc.UserName, Email = acc.Email };
             return Ok();
 
             //if (CheckInputs(acc))
@@ -52,7 +55,7 @@ namespace Project.Controllers
             //else
             //    return BadRequest(new { errors = _Errors });
 
-            
+
         }
 
         [HttpPut("{id}")]
@@ -100,14 +103,13 @@ namespace Project.Controllers
                 _Errors.Add("LongitudeMissing");
             if (acc.Latitude == null)
                 _Errors.Add("LatitudeMissing");
-
             else
             {   
                 if (!Accounts.GetAll().Any())
                     Accounts.Add(acc);
                 else
                 {
-                    if (Accounts.FindUser(acc.UserName) != null)
+                    if (Accounts.Find(acc.UserName) != null)
                     {
                         _Errors.Add("DuplicateUserName  ");
                         return false;

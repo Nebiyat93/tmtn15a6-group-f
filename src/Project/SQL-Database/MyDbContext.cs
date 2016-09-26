@@ -37,6 +37,7 @@ namespace Project.SQL_Database
             modelBuilder.Entity<Direction>().HasOne(pt => pt.Recipe).WithMany(d => d.Directions).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.RecipeId);
         }
         
+        public DbSet<Account> Accounts { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Direction> Directions { get; set; }

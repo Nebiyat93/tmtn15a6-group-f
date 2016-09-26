@@ -12,10 +12,9 @@ namespace Project.Models
     {
       
         private MyDbContext _context = new MyDbContext();
-
         public IEnumerable<Account> GetAll()
         {
-            return _context.Database;
+            return _context.Accounts;
         }
 
         public void Add(Account acc)
