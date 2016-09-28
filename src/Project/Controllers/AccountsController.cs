@@ -15,18 +15,18 @@ using System.ComponentModel.DataAnnotations;
 namespace Project.Controllers
 {
     [Route("api/v1/[controller]")]
-    public class AccountController : Controller
+    public class AccountsController : Controller
     {
         private MyDbContext _context = new MyDbContext();
         private List<IdentityError> _Errors = new List<IdentityError>();
         private readonly UserManager<AccountIdentity> _userManager;
         private readonly ILogger _logger;
 
-        public AccountController( UserManager<AccountIdentity> userManager,
+        public AccountsController( UserManager<AccountIdentity> userManager,
             ILoggerFactory loggerFactory)
         {
             _userManager = userManager;
-            _logger = loggerFactory.CreateLogger<AccountController>();
+            _logger = loggerFactory.CreateLogger<AccountsController>();
         }
         //public IAccount Accounts { get; set; }
 
@@ -39,7 +39,7 @@ namespace Project.Controllers
         [HttpGet("{id}", Name = "GetAcc")]
         public IActionResult GetById(string Id)
         {
-            var item = _userManager.Users.First(p => p.Id == Id);
+            var item = _userManager.Users.FirstOrDefault(p => p.Id == Id);
             if (item == null)
                 return NotFound();
             return Ok(item);
@@ -55,7 +55,8 @@ namespace Project.Controllers
                 if (res.Succeeded)
                 {
                     _logger.LogInformation(3, "Bla bla");
-                    return CreatedAtRoute("GetAcc", new { id = acc.UserName }, acc);
+                    var item = _userManager.Users.FirstOrDefault(p => p.UserName == acc.UserName);
+                    return CreatedAtRoute("GetAcc", new { id = item.Id }, acc);
                 }
 
                 foreach (var item in res.Errors)
@@ -66,13 +67,15 @@ namespace Project.Controllers
             return BadRequest();
         }
 
-        [HttpPut("{id}")]
+        [HttpPatch("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] Account acc)
         {
-            if (acc.Latitude == null || acc.Longitude == null)
+           
+            if (_userManager.Users.FirstOrDefault(p => p.Id == id) == null)
+                return NotFound();
+    
+            if (acc.Latitude != null || acc.Longitude != null)
             {
-
-
                 var _acc = _userManager.Users.First(p => p.Id == id);
                 _acc.Longitude = acc.Longitude;
                 _acc.Latitude = acc.Latitude;
@@ -120,6 +123,8 @@ namespace Project.Controllers
     }
     public class Account
     {
+        [Key]
+        public string Id { get; set; }
         [Required]
         public string UserName { get; set; }
         [Required]
