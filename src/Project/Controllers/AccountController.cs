@@ -16,91 +16,105 @@ namespace Project.Controllers
     [Route("api/v1/[controller]")]
     public class AccountController : Controller
     {
+        private MyDbContext _context = new MyDbContext();
         private List<IdentityError> _Errors = new List<IdentityError>();
-        private readonly UserManager<Account> _userManager;
-        private readonly SignInManager<Account> _signInManager;
+        private readonly UserManager<AccountIdentity> _userManager;
         private readonly ILogger _logger;
 
-        public AccountController(IAccount acc, 
-            UserManager<Account> userManager,
-            SignInManager<Account> signInManager,
+        public AccountController( UserManager<AccountIdentity> userManager,
             ILoggerFactory loggerFactory)
         {
-            Accounts = acc;
             _userManager = userManager;
-            _signInManager = signInManager;
             _logger = loggerFactory.CreateLogger<AccountController>();
         }
         public IAccount Accounts { get; set; }
 
         [HttpGet("GetAll")]
-        public IEnumerable<Account> GetAll()
+        public IEnumerable<AccountIdentity> GetAll()
         {
-            return Accounts.GetAll();
+            return _userManager.Users;
         }
 
         [HttpGet("{id}", Name = "GetAcc")]
         public IActionResult GetById(string Id)
         {
-            var item = Accounts.Find(Id);
+            var item = _userManager.Users.First(p => p.Id == Id);
             if (item == null)
                 return NotFound();
             return Ok(item);
         }
 
-        [HttpPost]
+        [HttpPost("password")]
         public async Task<IActionResult> Create([FromBody] Account acc)
         {
             if (ModelState.IsValid)
             {
-                var user = new Account { UserName = acc.UserName, Email = acc.Email };
-                var res = await _userManager.CreateAsync(user, acc.PasswordHash);
+                var user = new AccountIdentity { UserName = acc.UserName, Latitude = acc.Latitude, Longitude = acc.Longitude };
+                var res = await _userManager.CreateAsync(user, acc.Password);
                 if (res.Succeeded)
                 {
-                    await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation(3, "Bla bla");
-                    return Created("GetAcc", acc.Id);
+                    return Ok();
                 }
 
                 foreach (var item in res.Errors)
                     _Errors.Add(item);
-                return BadRequest();
+                return BadRequest(new { errors = _Errors });
             }
 
             return BadRequest();
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(string id, [FromBody] Account acc)
+        public async Task<IActionResult> Update(string id, [FromBody] Account acc)
         {
-            if (acc.Longitude == null || acc.Latitude == null)
-                return NoContent();
+            if (acc.Latitude == null || acc.Longitude == null)
+            {
+
+
+                var _acc = _userManager.Users.First(p => p.Id == id);
+                _acc.Longitude = acc.Longitude;
+                _acc.Latitude = acc.Latitude;
+
+                var res = await _userManager.UpdateAsync(_acc);
+                if (res.Succeeded)
+                {
+                    _logger.LogInformation(3, "Bla bla");
+                    return new NoContentResult();
+                }
+
+                foreach (var item in res.Errors)
+                    _Errors.Add(item);
+                return BadRequest(new { errors = _Errors });
+            }
             else
             {
-                var oldAcc = Accounts.Find  (id);
-                if (acc == null || oldAcc.Id != id)
-                    return NotFound();
-
-                else if (oldAcc == null)
-                    return NotFound();
-
-                Accounts.Update(acc);
-                return new NoContentResult();
+                return NoContent();
             }
+            
+            
+           
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
-            var acc = Accounts.Find(id);
-            if (acc == null)
+            
+            var _acc = _userManager.Users.First(p => p.Id == id);
+            if (_acc == null)
                 return NotFound();
 
-            if (acc.Comments != null)
-                
+            var res = await _userManager.DeleteAsync(_acc);
 
-            Accounts.Remove(id);
-            return new NoContentResult();
+            if (res.Succeeded)
+            {
+                _logger.LogInformation(3, "Bla bla");
+                return new NoContentResult();
+            }
+            foreach (var item in res.Errors)
+                _Errors.Add(item);
+            return BadRequest(new { errors = _Errors });
+            
         }
     }
 }

@@ -41,12 +41,12 @@ namespace Project
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
 
-            services.AddIdentity<MyDbContext, IdentityRole>().
+            services.AddIdentity<AccountIdentity, IdentityRole>().
                 AddEntityFrameworkStores<MyDbContext>();
 
             services.AddMvc();
 
-            services.AddSingleton<IAccount, AccountRepository>();
+            services.AddDbContext<MyDbContext>();
             services.AddSingleton<IComment, CommentRepository>();
             services.AddSingleton<IRecipe, RecipeRepository>();
             services.AddSingleton<IDirection, DirectionRepository>();

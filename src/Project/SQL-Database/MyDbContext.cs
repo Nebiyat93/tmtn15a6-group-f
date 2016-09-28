@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Project.SQL_Database
 {
-    public class MyDbContext : IdentityDbContext<Account>
+    public class MyDbContext : IdentityDbContext<AccountIdentity>
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -21,25 +21,24 @@ namespace Project.SQL_Database
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Account>().HasMany(pt => pt.Comments).WithOne(c => c.Account).OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<Account>().HasMany(pt => pt.Recipes).WithOne(r => r.Account).OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<Account>().HasMany(pt => pt.AccountRecipes).WithOne(pt => pt.Account).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<AccountIdentity>().HasMany(pt => pt.Comments).WithOne(c => c.AccountIdentity).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<AccountIdentity>().HasMany(pt => pt.Recipes).WithOne(r => r.AccountIdentity).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<AccountIdentity>().HasMany(pt => pt.AccountRecipes).WithOne(pt => pt.AccountIdentity).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<AccountRecipe>().HasKey(ar => new { ar.AccountId, ar.RecipeId });
-            modelBuilder.Entity<AccountRecipe>().HasOne(pt => pt.Account).WithMany(pt => pt.AccountRecipes).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.AccountId);
+            modelBuilder.Entity<AccountRecipe>().HasOne(pt => pt.AccountIdentity).WithMany(pt => pt.AccountRecipes).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.AccountId);
 
-            modelBuilder.Entity<Recipe>().HasOne(pt => pt.Account).WithMany(r => r.Recipes).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f=>f.AccountId);
+            modelBuilder.Entity<Recipe>().HasOne(pt => pt.AccountIdentity).WithMany(r => r.Recipes).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f=>f.AccountId);
             modelBuilder.Entity<Recipe>().HasMany(c => c.Comments).WithOne(r => r.Recipe).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Recipe>().HasMany(d => d.Directions).WithOne(r => r.Recipe).OnDelete(DeleteBehavior.Cascade);
             
             modelBuilder.Entity<AccountRecipe>().HasOne(pt => pt.Recipe).WithMany(pt => pt.AccountRecipes).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.RecipeId);
 
             modelBuilder.Entity<Comment>().HasOne(pt => pt.Recipe).WithMany(c => c.Comments).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.RecipeId);
-            modelBuilder.Entity<Comment>().HasOne(pt => pt.Account).WithMany(c => c.Comments).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.AccountId);
+            modelBuilder.Entity<Comment>().HasOne(pt => pt.AccountIdentity).WithMany(c => c.Comments).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.AccountId);
 
             modelBuilder.Entity<Direction>().HasOne(pt => pt.Recipe).WithMany(d => d.Directions).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.RecipeId);
         }
         
-        public DbSet<Account> Accounts { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Direction> Directions { get; set; }

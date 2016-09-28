@@ -7,19 +7,16 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Project.Models
 {
-    public class Account : IdentityUser
+    public class Account 
     {
-        public Account()
-        {
-            Comments = new HashSet<Comment>();
-            Recipes = new HashSet<Recipe>();
-        }
+        [Required]
+        public string UserName { get; set; }
+        [Required]
+        public string Password { get; set; }
         
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
 
-        public ICollection<Comment> Comments { get; set; } 
-        public ICollection<Recipe> Recipes { get; set; } 
-        public ICollection<AccountRecipe> AccountRecipes {  get; set;  }
+        
     }
 }

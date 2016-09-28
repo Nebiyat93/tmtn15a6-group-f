@@ -33,6 +33,6 @@ namespace Project.Models
         public ICollection<Direction> Directions { get; set; } 
         public ICollection<AccountRecipe> AccountRecipes { get; set; }
 
-        public Account Account { get; set; } 
+        public AccountIdentity AccountIdentity { get; set; } 
     }
 }
