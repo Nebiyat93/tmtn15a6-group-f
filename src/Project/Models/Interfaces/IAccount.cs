@@ -1,4 +1,4 @@
-﻿
+﻿/*
 using System.Collections.Generic;
 
 namespace Project.Models.Interfaces
@@ -13,3 +13,4 @@ namespace Project.Models.Interfaces
         void Update(Account acc);
     }
 }
+*/

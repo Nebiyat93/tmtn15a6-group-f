@@ -9,6 +9,7 @@ using Project.SQL_Database;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations;
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Project.Controllers
@@ -27,7 +28,7 @@ namespace Project.Controllers
             _userManager = userManager;
             _logger = loggerFactory.CreateLogger<AccountController>();
         }
-        public IAccount Accounts { get; set; }
+        //public IAccount Accounts { get; set; }
 
         [HttpGet("GetAll")]
         public IEnumerable<AccountIdentity> GetAll()
@@ -54,7 +55,7 @@ namespace Project.Controllers
                 if (res.Succeeded)
                 {
                     _logger.LogInformation(3, "Bla bla");
-                    return Ok();
+                    return CreatedAtRoute("GetAcc", new { id = acc.UserName }, acc);
                 }
 
                 foreach (var item in res.Errors)
@@ -116,5 +117,17 @@ namespace Project.Controllers
             return BadRequest(new { errors = _Errors });
             
         }
+    }
+    public class Account
+    {
+        [Required]
+        public string UserName { get; set; }
+        [Required]
+        public string Password { get; set; }
+
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+
+
     }
 }
