@@ -31,7 +31,7 @@ namespace Project.Models
 
         public ICollection<Comment> Comments { get; set; } 
         public ICollection<Direction> Directions { get; set; } 
-        public ICollection<AccountRecipe> AccountRecipes { get; set; }
+        public ICollection<Favorites> AccountRecipes { get; set; }
 
         public AccountIdentity AccountIdentity { get; set; } 
     }

@@ -23,15 +23,15 @@ namespace Project.SQL_Database
 
             modelBuilder.Entity<AccountIdentity>().HasMany(pt => pt.Comments).WithOne(c => c.AccountIdentity).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<AccountIdentity>().HasMany(pt => pt.Recipes).WithOne(r => r.AccountIdentity).OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<AccountIdentity>().HasMany(pt => pt.AccountRecipes).WithOne(pt => pt.AccountIdentity).OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<AccountRecipe>().HasKey(ar => new { ar.AccountId, ar.RecipeId });
-            modelBuilder.Entity<AccountRecipe>().HasOne(pt => pt.AccountIdentity).WithMany(pt => pt.AccountRecipes).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.AccountId);
+            modelBuilder.Entity<AccountIdentity>().HasMany(pt => pt.Favorites).WithOne(pt => pt.AccountIdentity).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Favorites>().HasKey(ar => new { ar.AccountId, ar.RecipeId });
+            modelBuilder.Entity<Favorites>().HasOne(pt => pt.AccountIdentity).WithMany(pt => pt.Favorites).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.AccountId);
 
             modelBuilder.Entity<Recipe>().HasOne(pt => pt.AccountIdentity).WithMany(r => r.Recipes).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f=>f.AccountId);
             modelBuilder.Entity<Recipe>().HasMany(c => c.Comments).WithOne(r => r.Recipe).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Recipe>().HasMany(d => d.Directions).WithOne(r => r.Recipe).OnDelete(DeleteBehavior.Cascade);
             
-            modelBuilder.Entity<AccountRecipe>().HasOne(pt => pt.Recipe).WithMany(pt => pt.AccountRecipes).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.RecipeId);
+            modelBuilder.Entity<Favorites>().HasOne(pt => pt.Recipe).WithMany(pt => pt.AccountRecipes).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.RecipeId);
 
             modelBuilder.Entity<Comment>().HasOne(pt => pt.Recipe).WithMany(c => c.Comments).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.RecipeId);
             modelBuilder.Entity<Comment>().HasOne(pt => pt.AccountIdentity).WithMany(c => c.Comments).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.AccountId);

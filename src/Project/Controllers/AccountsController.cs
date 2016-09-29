@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Project.Models.Interfaces;
 using Project.Models;
 using Project.SQL_Database;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
@@ -21,15 +19,12 @@ namespace Project.Controllers
         private MyDbContext _context = new MyDbContext();
         private List<IdentityError> _Errors = new List<IdentityError>();
         private readonly UserManager<AccountIdentity> _userManager;
-        private readonly ILogger _logger;
 
         public AccountsController( UserManager<AccountIdentity> userManager,
             ILoggerFactory loggerFactory)
         {
             _userManager = userManager;
-            _logger = loggerFactory.CreateLogger<AccountsController>();
         }
-        //public IAccount Accounts { get; set; }
 
         //[HttpGet("GetAll")]
         //public IEnumerable<AccountIdentity> GetAll()
@@ -54,7 +49,35 @@ namespace Project.Controllers
             var item = _userManager.Users.Include(u => u.Recipes).ToList().FirstOrDefault(p => p.Id == Id);
             if (item == null)
                 return NotFound();
-            return Ok(new { item.Recipes });
+            return Ok(item.Recipes.Select(w => new { w.Id, w.Name, w.Created }));
+        }
+
+        [HttpGet("{id}/comments")]
+        public IActionResult GetCommentsById(string Id)
+        {
+            var item = _userManager.Users.Include(u => u.Comments).ToList().FirstOrDefault(p => p.Id == Id);
+            if (item == null)
+                return NotFound();
+            return Ok(item.Comments.Select(w => new { w.Id, w.RecipeId, w.Text, w.Grade, w.Created }));
+        }
+
+        [HttpGet("{id}/favorites")]
+        public IActionResult GetFavoritesById(string Id)
+        {
+            var item = _userManager.Users.Include(u => u.Favorites).ToList().FirstOrDefault(p => p.Id == Id);
+            if (item == null)
+                return NotFound();
+            return Ok(item.Favorites.Select(w => new { w.RecipeId, w.Recipe.Name, w.Recipe.Created }));
+        }
+
+        [HttpPut("{id}/favorites")]
+        public IActionResult UpdateFavoritesById(string Id)
+        {
+            var item = _userManager.Users.Include(u => u.Favorites).ToList().FirstOrDefault(p => p.Id == Id);
+            if (item == null)
+                return NotFound();
+            
+            return Ok(item.Favorites.Select(w => new { w.RecipeId, w.Recipe.Name, w.Recipe.Created }));
         }
 
         [HttpPost("password")]
@@ -77,7 +100,6 @@ namespace Project.Controllers
                 var res = await _userManager.CreateAsync(user, acc.Password);
                 if (res.Succeeded)
                 {
-                    _logger.LogInformation(3, "Bla bla");
                     var item = _userManager.Users.FirstOrDefault(p => p.UserName == acc.UserName);
                     
                     return CreatedAtRoute("GetAcc", new { id = item.Id }, new { item.Id, item.UserName, item.Longitude, item.Latitude } );
@@ -111,7 +133,6 @@ namespace Project.Controllers
                 var res = await _userManager.UpdateAsync(_acc);
                 if (res.Succeeded)
                 {
-                    _logger.LogInformation(3, "Bla bla");
                     return NoContent();
                 }
 
@@ -139,7 +160,6 @@ namespace Project.Controllers
 
             if (res.Succeeded)
             {
-                _logger.LogInformation(3, "Account Deleted");
                 return new NoContentResult();
             }
             foreach (var item in res.Errors)
