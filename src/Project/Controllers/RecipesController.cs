@@ -19,19 +19,23 @@ namespace Project.Controllers
         }
         public IRecipe Recipes { get; set; }
 
-        [HttpGet("GetAll")]
-        public IEnumerable<Recipe> GetAll()
-        {
-            return Recipes.GetAll();
-        }
+        //[HttpGet("GetAll")]
+        //public IEnumerable<Recipe> GetAll()
+        //{
+        //    return Recipes.GetAll();
+        //}
 
         [HttpGet("{id}", Name = "GetRecep")] // finished
         public IActionResult GetById(int Id)
         {
+            //var item = _userManager.Users.Include(u => u.Favorites).ToList().FirstOrDefault(p => p.Id == Id);
+            //if (item == null)
+            //    re-turn NotFound();
+            
             var item = Recipes.Find(Id);
             if (item == null)
                 return NotFound();
-            return Ok(new { item.Id, item.Name, item.CreatorId });
+            return Ok( new { item.Id, item.Name, item.CreatorId });
         }
 
         [HttpPost]
@@ -43,7 +47,7 @@ namespace Project.Controllers
             }
             Recipes.Add(recep);
 
-            return CreatedAtRoute("GetRecep", new { id = recep.Id }, new { recep.Name, recep.Description, recep.CreatorId, recep.Directions });
+            return CreatedAtRoute("GetRecep", new { id = recep.Id }, new { recep.Name, recep.Description, recep.CreatorId, recep.Directions});
         }
 
         [HttpPut("{id}")]
