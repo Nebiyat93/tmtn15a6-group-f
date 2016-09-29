@@ -46,13 +46,14 @@ namespace Project
             services.AddIdentity<AccountIdentity, IdentityRole>().
                 AddEntityFrameworkStores<MyDbContext>();
 
-            services.AddMvc().AddJsonOptions(options =>
-            {
-                options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-            });
+            services.AddMvc();
+            //    .AddJsonOptions(options =>
+            //{
+            //    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            //    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            //});
 
-                services.AddDbContext<MyDbContext>();
+            services.AddDbContext<MyDbContext>();
             services.AddSingleton<IComment, CommentManager>();
             services.AddSingleton<IRecipe, RecipeManager>();
             services.AddSingleton<IDirection, DirectionManager>();

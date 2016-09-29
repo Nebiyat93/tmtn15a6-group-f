@@ -31,12 +31,13 @@ namespace Project.Controllers
         }
         //public IAccount Accounts { get; set; }
 
-        [HttpGet("GetAll")]
-        public IEnumerable<AccountIdentity> GetAll()
-        {
-            var users = _userManager.Users.Include(u => u.Recipes).ToList();
-            return users;
-        }
+        //[HttpGet("GetAll")]
+        //public IEnumerable<AccountIdentity> GetAll()
+        //{
+        //    var users = _userManager.Users.Include(u => u.Recipes).ToList();
+        //    return users;
+        //    var u = _userManager.Users
+        //}
 
         [HttpGet("{id}", Name = "GetAcc")]
         public IActionResult GetById(string Id)
@@ -44,7 +45,7 @@ namespace Project.Controllers
             var item = _userManager.Users.Include(u => u.Recipes).ToList().FirstOrDefault(p => p.Id == Id);
             if (item == null)
                 return NotFound();
-            return Ok(item);
+            return Ok(new {item.Id, item.UserName, item.Latitude, item.Longitude});
         }
 
         [HttpGet("{id}/recipes")]
@@ -53,7 +54,7 @@ namespace Project.Controllers
             var item = _userManager.Users.Include(u => u.Recipes).ToList().FirstOrDefault(p => p.Id == Id);
             if (item == null)
                 return NotFound();
-            return Ok(item.Recipes);
+            return Ok(new { item.Recipes });
         }
 
         [HttpPost("password")]
