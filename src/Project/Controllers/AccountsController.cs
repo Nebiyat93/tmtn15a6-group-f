@@ -56,7 +56,8 @@ namespace Project.Controllers
                 {
                     _logger.LogInformation(3, "Bla bla");
                     var item = _userManager.Users.FirstOrDefault(p => p.UserName == acc.UserName);
-                    return CreatedAtRoute("GetAcc", new { id = item.Id }, acc);
+                    
+                    return CreatedAtRoute("GetAcc", new { id = item.Id }, new { item.Id, item.UserName, item.Longitude, item.Latitude } );
                 }
 
                 foreach (var item in res.Errors)
