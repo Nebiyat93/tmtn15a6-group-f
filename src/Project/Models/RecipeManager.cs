@@ -10,7 +10,7 @@ using Project.SQL_Database;
 
 namespace Project.Models
 {
-    public class RecipeRepository : IRecipe
+    public class RecipeManager : IRecipe
     {
         private MyDbContext _context = new MyDbContext();
 

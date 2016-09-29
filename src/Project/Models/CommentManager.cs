@@ -6,7 +6,7 @@ using Project.SQL_Database;
 
 namespace Project.Models
 {
-    public class CommentRepository : IComment
+    public class CommentManager : IComment
     {
 
         private MyDbContext _context = new MyDbContext();
@@ -24,9 +24,12 @@ namespace Project.Models
                 if (id < 0)
                     id *= -1;
                 comm.Id = id;
-                comm.Created = RecipeRepository.generateUnixTimestamp();
+                comm.Created = RecipeManager.generateUnixTimestamp();
             } while (_context.Comments.Any(h => h.Id == id)); //Loops as long as the existing row's id is the same as the newly generated one
 
+            var user = _context.Users.First(p => p.Id == comm.AccountId);
+            user.Comments.Add(comm);
+            _context.Users.Update(user);
             _context.Comments.Add(comm);
             _context.SaveChanges();
         }

@@ -53,9 +53,9 @@ namespace Project
             });
 
                 services.AddDbContext<MyDbContext>();
-            services.AddSingleton<IComment, CommentRepository>();
-            services.AddSingleton<IRecipe, RecipeRepository>();
-            services.AddSingleton<IDirection, DirectionRepository>();
+            services.AddSingleton<IComment, CommentManager>();
+            services.AddSingleton<IRecipe, RecipeManager>();
+            services.AddSingleton<IDirection, DirectionManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline

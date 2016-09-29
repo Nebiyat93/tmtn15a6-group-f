@@ -9,13 +9,13 @@ using Project.Models;
 
 namespace Project.Models
 {
-    public class DirectionRepository : IDirection
+    public class DirectionManager : IDirection
     {
         private static ConcurrentDictionary<int, Direction> _dir =
       new ConcurrentDictionary<int, Direction>();
 
 
-        public DirectionRepository()
+        public DirectionManager()
         {
             Add(new Direction { Id = 0 });
         }
