@@ -59,8 +59,19 @@ namespace Project.Controllers
         [HttpPost("password")]
         public async Task<IActionResult> Create([FromBody] Account acc)
         {
+
             if (ModelState.IsValid)
             {
+                List<string> err = new List<string>();
+
+                if (acc.Longitude == null)
+                    err.Add("LongitudeMissing");
+                if (acc.Latitude == null)
+                    err.Add("LatitudeMissing");
+                if (err.Count > 0)
+                    return BadRequest(new { error = err });
+
+
                 var user = new AccountIdentity { UserName = acc.UserName, Latitude = acc.Latitude, Longitude = acc.Longitude };
                 var res = await _userManager.CreateAsync(user, acc.Password);
                 if (res.Succeeded)
@@ -71,6 +82,7 @@ namespace Project.Controllers
                     return CreatedAtRoute("GetAcc", new { id = item.Id }, new { item.Id, item.UserName, item.Longitude, item.Latitude } );
                 }
 
+                
                 foreach (var item in res.Errors)
                     _Errors.Add(item);
                 return BadRequest(new { errors = _Errors });
@@ -82,31 +94,32 @@ namespace Project.Controllers
         [HttpPatch("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] Account acc)
         {
-           
-            if (_userManager.Users.FirstOrDefault(p => p.Id == id) == null)
+            var _acc = _userManager.Users.First(p => p.Id == id);
+
+            if (_acc == null)
                 return NotFound();
     
             if (acc.Latitude != null || acc.Longitude != null)
             {
-                var _acc = _userManager.Users.First(p => p.Id == id);
-                _acc.Longitude = acc.Longitude;
-                _acc.Latitude = acc.Latitude;
+                
+                if(acc.Longitude != null)
+                    _acc.Longitude = acc.Longitude;
+                if(acc.Latitude != null)
+                    _acc.Latitude = acc.Latitude;
 
                 var res = await _userManager.UpdateAsync(_acc);
                 if (res.Succeeded)
                 {
                     _logger.LogInformation(3, "Bla bla");
-                    return new NoContentResult();
+                    return NoContent();
                 }
 
                 foreach (var item in res.Errors)
                     _Errors.Add(item);
                 return BadRequest(new { errors = _Errors });
             }
-            else
-            {
-                return NoContent();
-            }
+
+            return BadRequest();    
             
             
            
@@ -114,7 +127,8 @@ namespace Project.Controllers
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
-        {
+        { 
+            // Auth missing.
             
             var _acc = _userManager.Users.First(p => p.Id == id);
             if (_acc == null)
@@ -124,7 +138,7 @@ namespace Project.Controllers
 
             if (res.Succeeded)
             {
-                _logger.LogInformation(3, "Bla bla");
+                _logger.LogInformation(3, "Account Deleted");
                 return new NoContentResult();
             }
             foreach (var item in res.Errors)
@@ -137,9 +151,9 @@ namespace Project.Controllers
     {
         [Key]
         public string Id { get; set; }
-        [Required]
+
         public string UserName { get; set; }
-        [Required]
+
         public string Password { get; set; }
 
         public double? Latitude { get; set; }

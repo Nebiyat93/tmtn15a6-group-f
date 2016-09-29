@@ -25,13 +25,13 @@ namespace Project.Controllers
             return Recipes.GetAll();
         }
 
-        [HttpGet("{id}", Name = "GetRecep")]
+        [HttpGet("{id}", Name = "GetRecep")] // finished
         public IActionResult GetById(int Id)
         {
             var item = Recipes.Find(Id);
             if (item == null)
                 return NotFound();
-            return new ObjectResult(item);
+            return new ObjectResult( item );
         }
 
         [HttpPost]

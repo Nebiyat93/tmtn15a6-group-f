@@ -30,6 +30,7 @@ namespace Project.Models
             var user = _context.Users.First(p => p.Id == comm.AccountId);
             user.Comments.Add(comm);
             _context.Users.Update(user);
+
             _context.Comments.Add(comm);
             _context.SaveChanges();
         }

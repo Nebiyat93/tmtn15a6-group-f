@@ -17,10 +17,10 @@ namespace Project.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
-        [Required]
+        
         [MaxLength(70)][ MinLength(5)]
         public string Name { get; set; }
-        [Required]
+        
         [MaxLength(300)][ MinLength(10)]
         public string Description { get; set; }
         [MaxLength(200)][MinLength(0)]
