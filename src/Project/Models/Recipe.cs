@@ -27,11 +27,11 @@ namespace Project.Models
         public string Image { get; set; }
         public int Created { get; set; }
 
-        public string AccountId {get;set;}
+        public string CreatorId {get;set;}
 
         public ICollection<Comment> Comments { get; set; } 
         public ICollection<Direction> Directions { get; set; } 
-        public ICollection<Favorites> AccountRecipes { get; set; }
+        public ICollection<Favorites> Favorites { get; set; }
 
         public AccountIdentity AccountIdentity { get; set; } 
     }

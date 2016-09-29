@@ -27,11 +27,11 @@ namespace Project.SQL_Database
             modelBuilder.Entity<Favorites>().HasKey(ar => new { ar.AccountId, ar.RecipeId });
             modelBuilder.Entity<Favorites>().HasOne(pt => pt.AccountIdentity).WithMany(pt => pt.Favorites).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.AccountId);
 
-            modelBuilder.Entity<Recipe>().HasOne(pt => pt.AccountIdentity).WithMany(r => r.Recipes).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f=>f.AccountId);
+            modelBuilder.Entity<Recipe>().HasOne(pt => pt.AccountIdentity).WithMany(r => r.Recipes).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f=>f.CreatorId);
             modelBuilder.Entity<Recipe>().HasMany(c => c.Comments).WithOne(r => r.Recipe).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Recipe>().HasMany(d => d.Directions).WithOne(r => r.Recipe).OnDelete(DeleteBehavior.Cascade);
             
-            modelBuilder.Entity<Favorites>().HasOne(pt => pt.Recipe).WithMany(pt => pt.AccountRecipes).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.RecipeId);
+            modelBuilder.Entity<Favorites>().HasOne(pt => pt.Recipe).WithMany(pt => pt.Favorites).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.RecipeId);
 
             modelBuilder.Entity<Comment>().HasOne(pt => pt.Recipe).WithMany(c => c.Comments).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.RecipeId);
             modelBuilder.Entity<Comment>().HasOne(pt => pt.AccountIdentity).WithMany(c => c.Comments).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.AccountId);
