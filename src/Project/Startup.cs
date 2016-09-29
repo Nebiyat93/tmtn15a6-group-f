@@ -11,6 +11,8 @@ using Project.Models.Interfaces;
 using Project.Models;
 using Project.SQL_Database;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Project
 {
@@ -44,9 +46,13 @@ namespace Project
             services.AddIdentity<AccountIdentity, IdentityRole>().
                 AddEntityFrameworkStores<MyDbContext>();
 
-            services.AddMvc();
+            services.AddMvc().AddJsonOptions(options =>
+            {
+                options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            });
 
-            services.AddDbContext<MyDbContext>();
+                services.AddDbContext<MyDbContext>();
             services.AddSingleton<IComment, CommentRepository>();
             services.AddSingleton<IRecipe, RecipeRepository>();
             services.AddSingleton<IDirection, DirectionRepository>();

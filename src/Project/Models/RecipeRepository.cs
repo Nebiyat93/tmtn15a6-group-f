@@ -31,6 +31,9 @@ namespace Project.Models
                 recep.Created = generateUnixTimestamp(); 
             } while (_context.Recipes.Any(h => h.Id == id)); //Loops as long as the existing row's id is the same as the newly generated one
             _context.Recipes.Add(recep);
+            var user = _context.Users.First(p => p.Id == recep.AccountId);
+            user.Recipes.Add(recep);
+            _context.Users.Update(user);
             _context.SaveChanges();
         }
 

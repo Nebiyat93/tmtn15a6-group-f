@@ -11,9 +11,9 @@ using Project.Models;
 namespace Project.Controllers
 {
     [Route("api/v1/[controller]")]
-    public class RecipeController : Controller
+    public class RecipesController : Controller
     {
-        public RecipeController(IRecipe recep)
+        public RecipesController(IRecipe recep)
         {
             Recipes = recep;
         }
@@ -42,6 +42,7 @@ namespace Project.Controllers
                 return BadRequest();
             }
             Recipes.Add(recep);
+
             return CreatedAtRoute("GetRecep", new { id = recep.Id }, recep);
         }
 

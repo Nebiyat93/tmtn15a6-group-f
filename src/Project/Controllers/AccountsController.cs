@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Project.Controllers
@@ -33,16 +34,26 @@ namespace Project.Controllers
         [HttpGet("GetAll")]
         public IEnumerable<AccountIdentity> GetAll()
         {
-            return _userManager.Users;
+            var users = _userManager.Users.Include(u => u.Recipes).ToList();
+            return users;
         }
 
         [HttpGet("{id}", Name = "GetAcc")]
         public IActionResult GetById(string Id)
         {
-            var item = _userManager.Users.FirstOrDefault(p => p.Id == Id);
+            var item = _userManager.Users.Include(u => u.Recipes).ToList().FirstOrDefault(p => p.Id == Id);
             if (item == null)
                 return NotFound();
             return Ok(item);
+        }
+
+        [HttpGet("{id}/recipes")]
+        public IActionResult GetRecipesById(string Id)
+        {
+            var item = _userManager.Users.Include(u => u.Recipes).ToList().FirstOrDefault(p => p.Id == Id);
+            if (item == null)
+                return NotFound();
+            return Ok(item.Recipes);
         }
 
         [HttpPost("password")]
