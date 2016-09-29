@@ -5,15 +5,16 @@ using System.Threading.Tasks;
 using Project.Models.Interfaces;
 using System.Collections.Concurrent;
 using Project.Models;
+using Project.SQL_Database;
+
 
 
 namespace Project.Models
 {
     public class DirectionManager : IDirection
     {
-        private static ConcurrentDictionary<int, Direction> _dir =
-      new ConcurrentDictionary<int, Direction>();
 
+        private MyDbContext _context = new MyDbContext();
 
         public DirectionManager()
         {
@@ -22,32 +23,43 @@ namespace Project.Models
 
         public IEnumerable<Direction> GetAll()
         {
-            return _dir.Values;
+            return _context.Directions;
         }
 
         public void Add(Direction dir)
         {
-            dir.Id = 0;
-            _dir[dir.Id] = dir;
+            int id;
+            do
+            {
+                id = Guid.NewGuid().GetHashCode(); //Returns numbers from GUID
+                if (id < 0)
+                    id *= -1;
+                dir.Id = id;
+   
+            } while (_context.Directions.Any(h => h.Id == id)); //Loops as long as the existing row's id is the same as the newly generated one
+            _context.Directions.Add(dir);
+            var recep = _context.Recipes.First(p => p.Id == dir.RecipeId);
+            recep.Directions.Add(dir);
+            _context.Recipes.Update(recep);
+            _context.SaveChanges();
         }
 
         public Direction Find(int id)
         {
-            Direction dir;
-            _dir.TryGetValue(id, out dir);
-            return dir;
+           
+            return _context.Directions.Where(h => h.Id == id).First();
         }
 
-        public Direction Remove(int id)
+        public void Remove(int id)
         {
-            Direction dir;
-            _dir.TryRemove(id, out dir);
-            return dir;
+            var dir = Find(id);
+            _context.Remove(dir);
+            _context.SaveChanges();
         }
 
         public void Update(Direction dir)
         {
-            _dir[dir.Id] = dir;
+            
         }
     }
 

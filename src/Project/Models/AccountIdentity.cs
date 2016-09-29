@@ -20,6 +20,6 @@ namespace Project.Models
 
         public ICollection<Comment> Comments { get; set; }
         public ICollection<Recipe> Recipes { get; set; }   
-        public ICollection<AccountRecipe> AccountRecipes { get; set; }
+        public ICollection<Favorites> Favorites { get; set; }
     }
 }

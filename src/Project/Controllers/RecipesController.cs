@@ -31,7 +31,7 @@ namespace Project.Controllers
             var item = Recipes.Find(Id);
             if (item == null)
                 return NotFound();
-            return new ObjectResult( item );
+            return Ok(new { item.Id, item.Name, item.CreatorId });
         }
 
         [HttpPost]
@@ -43,7 +43,7 @@ namespace Project.Controllers
             }
             Recipes.Add(recep);
 
-            return CreatedAtRoute("GetRecep", new { id = recep.Id }, recep);
+            return CreatedAtRoute("GetRecep", new { id = recep.Id }, new { recep.Name, recep.Description, recep.CreatorId, recep.Directions });
         }
 
         [HttpPut("{id}")]

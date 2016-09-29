@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Project.Models
 {
-    public class AccountRecipe
+    public class Favorites
     {
         public string AccountId { get; set; }
         public AccountIdentity AccountIdentity { get; set; }
