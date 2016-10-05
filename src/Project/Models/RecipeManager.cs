@@ -16,7 +16,7 @@ namespace Project.Models
 
         public IEnumerable<Recipe> GetAllSorted()
         {
-            return _context.Recipes.OrderBy(r => r.Created);
+            return _context.Recipes.OrderByDescending(r => r.Created);
         }
         
         public void Add(Recipe recep)

@@ -33,15 +33,11 @@ namespace Project.Controllers
             return Ok( new { item.Id, item.Name, item.CreatorId });
         }
 
-
-        // not finished yet!!
-
-        [HttpGet("/pages")]
+        [HttpGet]
         public IActionResult GetNewest([FromQuery]int page)
         {
-            // For /test?page=4, the page parameter would have the value 4.
-            var item = Recipes.GetAllSorted().ToList();
-            if (item == null)
+            var item = Recipes.GetAllSorted().Skip(2 * (page-1)).Take(2).ToList();
+            if (page == 0 | item.Count == 0 )
                 return NotFound();
             return Ok(item.Select(w => new { w.Id, w.Name, w.Created}));
         }
@@ -50,9 +46,7 @@ namespace Project.Controllers
         public IActionResult Create([FromBody] Recipe recep)
         {
             if (recep == null)
-            {
                 return BadRequest();
-            }
             Recipes.Add(recep);
 
             return CreatedAtRoute("GetRecep", new { id = recep.Id }, new { recep.Name, recep.Description, recep.CreatorId, recep.Directions});
