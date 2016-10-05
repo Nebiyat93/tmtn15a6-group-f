@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Project.Models;
-using Project.SQL_Database;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
@@ -16,24 +13,18 @@ namespace Project.Controllers
     [Route("api/v1/[controller]")]
     public class AccountsController : Controller
     {
-        private MyDbContext _context = new MyDbContext();
-        private List<IdentityError> _Errors = new List<IdentityError>();
         private readonly UserManager<AccountIdentity> _userManager;
 
-        public AccountsController( UserManager<AccountIdentity> userManager,
-            ILoggerFactory loggerFactory)
+        public AccountsController(UserManager<AccountIdentity> userManager)
         {
             _userManager = userManager;
         }
 
-        //[HttpGet("GetAll")]
-        //public IEnumerable<AccountIdentity> GetAll()
-        //{
-        //    var users = _userManager.Users.Include(u => u.Recipes).ToList();
-        //    return users;
-        //    var u = _userManager.Users
-        //}
-
+        /// <summary>
+        /// Returns user information
+        /// </summary>
+        /// <param name="Id">User's ID</param>
+        /// <returns></returns>
         [HttpGet("{id}", Name = "GetAcc")]
         public IActionResult GetById(string Id)
         {
@@ -43,6 +34,11 @@ namespace Project.Controllers
             return Ok(new {item.Id, item.UserName, item.Latitude, item.Longitude});
         }
 
+        /// <summary>
+        /// Returns recipe(s) that's bound to the ID
+        /// </summary>
+        /// <param name="Id">User's ID</param>
+        /// <returns></returns>
         [HttpGet("{id}/recipes")]
         public IActionResult GetRecipesById(string Id)
         {
@@ -51,6 +47,7 @@ namespace Project.Controllers
                 return NotFound();
             return Ok(item.Recipes.Select(w => new { w.Id, w.Name, w.Created }));
         }
+
 
         [HttpGet("{id}/comments")]
         public IActionResult GetCommentsById(string Id)
@@ -80,7 +77,10 @@ namespace Project.Controllers
             return Ok(item.Favorites.Select(w => new { w.RecipeId, w.Recipe.Name, w.Recipe.Created }));
         }
 
+        
+        
         [HttpPost("password")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([FromBody] Account acc)
         {
 
@@ -104,15 +104,12 @@ namespace Project.Controllers
                     
                     return CreatedAtRoute("GetAcc", new { id = item.Id }, new { item.Id, item.UserName, item.Longitude, item.Latitude } );
                 }
-
-                
-                foreach (var item in res.Errors)
-                    _Errors.Add(item);
-                return BadRequest(new { errors = _Errors });
+                return BadRequest(new { errors = res.Errors });
             }
 
             return BadRequest();
         }
+
 
         [HttpPatch("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] Account acc)
@@ -135,10 +132,7 @@ namespace Project.Controllers
                 {
                     return NoContent();
                 }
-
-                foreach (var item in res.Errors)
-                    _Errors.Add(item);
-                return BadRequest(new { errors = _Errors });
+                return BadRequest(new { errors = res.Errors });
             }
 
             return BadRequest();    
@@ -159,12 +153,8 @@ namespace Project.Controllers
             var res = await _userManager.DeleteAsync(_acc);
 
             if (res.Succeeded)
-            {
                 return new NoContentResult();
-            }
-            foreach (var item in res.Errors)
-                _Errors.Add(item);
-            return BadRequest(new { errors = _Errors });
+            return BadRequest(new { errors = res.Errors });
             
         }
     }

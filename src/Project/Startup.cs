@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,8 +7,10 @@ using Project.Models.Interfaces;
 using Project.Models;
 using Project.SQL_Database;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System;
+using Project.JWT;
 
 namespace Project
 {
@@ -57,6 +55,9 @@ namespace Project
             services.AddSingleton<IComment, CommentManager>();
             services.AddSingleton<IRecipe, RecipeManager>();
             services.AddSingleton<IDirection, DirectionManager>();
+
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
@@ -64,14 +65,38 @@ namespace Project
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-
             app.UseIdentity();
-
             app.UseApplicationInsightsRequestTelemetry();
-
             app.UseApplicationInsightsExceptionTelemetry();
-
             app.UseMvc();
+
+            var secretKey = "JorisMachtSehrGuteMusik";
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
+
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                // The signing key must match!
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = signingKey,
+
+                // Validate the token expiry
+                ValidateLifetime = true,
+
+                // If you want to allow a certain amount of clock drift, set that here:
+                ClockSkew = TimeSpan.Zero
+            };
+
+            app.UseCookieAuthentication(new CookieAuthenticationOptions
+            {
+                AutomaticAuthenticate = true,
+                AutomaticChallenge = true,
+                AuthenticationScheme = "Cookie",
+                CookieName = "access_token",
+                TicketDataFormat = new CustomJwtDataFormat(
+                    SecurityAlgorithms.HmacSha256,
+                    tokenValidationParameters)
+            });
+
         }
     }
 }
