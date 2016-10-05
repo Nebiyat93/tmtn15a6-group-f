@@ -18,7 +18,7 @@ namespace Project.Models
         {
             return _context.Recipes.OrderByDescending(r => r.Created);
         }
-        
+
         public void Add(Recipe recep)
         {
             int id;

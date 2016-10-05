@@ -34,7 +34,7 @@ namespace Project.SQL_Database
             modelBuilder.Entity<Favorites>().HasOne(pt => pt.Recipe).WithMany(pt => pt.Favorites).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.RecipeId);
 
             modelBuilder.Entity<Comment>().HasOne(pt => pt.Recipe).WithMany(c => c.Comments).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.RecipeId);
-            modelBuilder.Entity<Comment>().HasOne(pt => pt.AccountIdentity).WithMany(c => c.Comments).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.AccountId);
+            modelBuilder.Entity<Comment>().HasOne(pt => pt.AccountIdentity).WithMany(c => c.Comments).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.CommenterId);
 
             modelBuilder.Entity<Direction>().HasOne(pt => pt.Recipe).WithMany(d => d.Directions).OnDelete(DeleteBehavior.Restrict).HasForeignKey(f => f.RecipeId);
         }

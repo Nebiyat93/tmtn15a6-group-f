@@ -42,6 +42,15 @@ namespace Project.Controllers
             return Ok(item.Select(w => new { w.Id, w.Name, w.Created}));
         }
 
+        [HttpGet("{id}/comments")]
+        public IActionResult GetCommentsById(int Id)
+        {
+            var item = Recipes.Find(Id).Comments;
+            if (item == null)
+                return NotFound();
+            return Ok(item.Select(w => new { w.Text, w.Grade, w.CommenterId }));
+        }
+
         [HttpPost]
         public IActionResult Create([FromBody] Recipe recep)
         {
@@ -53,7 +62,6 @@ namespace Project.Controllers
         }
 
         // for Image!!
-
         [HttpPut("{id}/image")]
         public IActionResult UpdloadImage(int id, [FromBody] Recipe newRecipe)
         {
@@ -66,6 +74,17 @@ namespace Project.Controllers
 
             Recipes.Update(newRecipe, oldRecipe);
             return new NoContentResult();
+        }
+
+        [HttpPost("{id}/comments")]
+        public IActionResult CreateComment(int id, [FromBody] Comment comm)
+        {
+            if (comm == null)
+                return BadRequest();
+
+            // Create a comment --> implementation missing
+
+            return CreatedAtRoute("GetComm", new { id = comm.Text, comm.Grade, comm.CommenterId });
         }
 
         [HttpPatch("{id}")]
