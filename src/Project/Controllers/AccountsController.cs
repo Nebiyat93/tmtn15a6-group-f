@@ -80,7 +80,7 @@ namespace Project.Controllers
         
         
         [HttpPost("password")]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([FromBody] Account acc)
         {
 
@@ -106,7 +106,6 @@ namespace Project.Controllers
                 }
                 return BadRequest(new { errors = res.Errors });
             }
-
             return BadRequest();
         }
 

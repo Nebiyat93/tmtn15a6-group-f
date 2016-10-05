@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System;
 using Project.JWT;
+using Microsoft.Extensions.Options;
 
 namespace Project
 {
@@ -60,6 +61,8 @@ namespace Project
 
         }
 
+        private static readonly string secretKey = "JorisMachtSehrGuteMusik";
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
@@ -68,10 +71,14 @@ namespace Project
             app.UseIdentity();
             app.UseApplicationInsightsRequestTelemetry();
             app.UseApplicationInsightsExceptionTelemetry();
-            app.UseMvc();
 
-            var secretKey = "JorisMachtSehrGuteMusik";
+
+
             var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
+            var options = new TokenProviderOptions
+            {
+                SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
+            };
 
             var tokenValidationParameters = new TokenValidationParameters
             {
@@ -97,6 +104,9 @@ namespace Project
                     tokenValidationParameters)
             });
 
+            //app.UseMiddleware<TokenProviderOptions>(Options.Create(options));
+
+            app.UseMvc();
         }
     }
 }
