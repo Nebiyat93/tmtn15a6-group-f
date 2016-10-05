@@ -19,23 +19,31 @@ namespace Project.Controllers
         }
         public IRecipe Recipes { get; set; }
 
-        //[HttpGet("GetAll")]
-        //public IEnumerable<Recipe> GetAll()
-        //{
-        //    return Recipes.GetAll();
-        //}
-
-        [HttpGet("{id}", Name = "GetRecep")] // finished
+        /// <summary>
+        /// Returns recipe information
+        /// </summary>
+        /// <param name="Id">Recipe ID</param>
+        /// <returns></returns>
+        [HttpGet("{id}", Name = "GetRecep")]
         public IActionResult GetById(int Id)
-        {
-            //var item = _userManager.Users.Include(u => u.Favorites).ToList().FirstOrDefault(p => p.Id == Id);
-            //if (item == null)
-            //    re-turn NotFound();
-            
+        {        
             var item = Recipes.Find(Id);
             if (item == null)
                 return NotFound();
             return Ok( new { item.Id, item.Name, item.CreatorId });
+        }
+
+
+        // not finished yet!!
+
+        [HttpGet("/pages")]
+        public IActionResult GetNewest([FromQuery]int page)
+        {
+            // For /test?page=4, the page parameter would have the value 4.
+            var item = Recipes.GetAllSorted().ToList();
+            if (item == null)
+                return NotFound();
+            return Ok(item.Select(w => new { w.Id, w.Name, w.Created}));
         }
 
         [HttpPost]
@@ -50,8 +58,10 @@ namespace Project.Controllers
             return CreatedAtRoute("GetRecep", new { id = recep.Id }, new { recep.Name, recep.Description, recep.CreatorId, recep.Directions});
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] Recipe newRecipe)
+        // for Image!!
+
+        [HttpPut("{id}/image")]
+        public IActionResult UpdloadImage(int id, [FromBody] Recipe newRecipe)
         {
             var oldRecipe = Recipes.Find(id);
             if (newRecipe == null || oldRecipe.Id != id)
@@ -64,14 +74,28 @@ namespace Project.Controllers
             return new NoContentResult();
         }
 
+        [HttpPatch("{id}")]
+        public IActionResult Update(int id, [FromBody] Recipe newRecipe)
+        {
+            var oldRecipe = Recipes.Find(id);
+
+            if (newRecipe == null || oldRecipe == null || oldRecipe.Id != id)
+                return NotFound();
+
+            // Error Messages missing!! (Bad Request)
+
+            Recipes.Update(newRecipe, oldRecipe);
+            return new NoContentResult();
+        }
+
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
+            // Auth missing.
+
             var acc = Recipes.Find(id);
             if (acc == null)
-            {
                 return NotFound();
-            }
 
             Recipes.Remove(id);
             return new NoContentResult();
