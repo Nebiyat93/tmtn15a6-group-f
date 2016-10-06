@@ -9,6 +9,7 @@ namespace Project.Models.Interfaces
         void Remove(int Id);
         void Update(Recipe oldRecipe, Recipe newRecipe);
         void Add(Recipe recp);
+        IEnumerable<Recipe> GetAll();
         IEnumerable<Recipe> GetAllSorted();
     }
 }

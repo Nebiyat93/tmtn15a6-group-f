@@ -33,27 +33,27 @@ namespace Project.Controllers
             return new ObjectResult(comm);
         }
 
-        [HttpPost]
-        public IActionResult Create([FromBody] Comment comm)
-        {
+        //[HttpPost]
+        //public IActionResult Create([FromBody] Comment comm)
+        //{
 
-            if (ModelState.IsValid)
-            {
-                if (string.IsNullOrWhiteSpace((comm.Text)))
-                {
-                    return BadRequest();
-                }
-                else
-                {
-                    Comments.Add(comm);
-                    return CreatedAtRoute("GetComm", new { id = comm.Id }, comm);
-                }
-            }else
-            {
-                return BadRequest();
-            }
+        //    if (ModelState.IsValid)
+        //    {
+        //        if (string.IsNullOrWhiteSpace((comm.Text)))
+        //        {
+        //            return BadRequest();
+        //        }
+        //        else
+        //        {
+        //            Comments.Add(comm);
+        //            return CreatedAtRoute("GetComm", new { id = comm.Id }, comm);
+        //        }
+        //    }else
+        //    {
+        //        return BadRequest();
+        //    }
             
-        }
+        //}
 
         [HttpPut("{id}")]
         public IActionResult Update(int id, [FromBody] Comment comm)

@@ -13,6 +13,7 @@ namespace Project.Controllers
     [Route("api/v1/[controller]")]
     public class RecipesController : Controller
     {
+        private Models.CommentManager s = new CommentManager();
         public RecipesController(IRecipe recep)
         {
             Recipes = recep;
@@ -45,10 +46,19 @@ namespace Project.Controllers
         [HttpGet("{id}/comments")]
         public IActionResult GetCommentsById(int Id)
         {
-            var item = Recipes.Find(Id).Comments;
+            var item = Recipes.Find(Id);
             if (item == null)
                 return NotFound();
-            return Ok(item.Select(w => new { w.Text, w.Grade, w.CommenterId }));
+            return Ok(item.Comments.Select(w => new { w.Text, w.Grade, w.CommenterId }));
+        }
+
+        [HttpGet("search")]
+        public IActionResult Search([FromQuery]string term)
+        {
+            var item = Recipes.GetAll().Where(w => w.Name.Contains(term) || w.Description.Contains(term));
+            //if ()
+            //    return NotFound();
+            return Ok(item.Select(w => new { w.Id, w.Name, w.Created }));
         }
 
         [HttpPost]
@@ -83,8 +93,10 @@ namespace Project.Controllers
                 return BadRequest();
 
             // Create a comment --> implementation missing
+            comm.RecipeId = id;
+            s.Add(comm);
 
-            return CreatedAtRoute("GetComm", new { id = comm.Text, comm.Grade, comm.CommenterId });
+            return CreatedAtRoute("GetComm", new {  comm.Text, comm.Grade, comm.CommenterId });
         }
 
         [HttpPatch("{id}")]
