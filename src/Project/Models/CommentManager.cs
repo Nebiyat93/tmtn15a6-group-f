@@ -42,7 +42,7 @@ namespace Project.Models
 
         public Comment Find(int id)
         {
-            return _context.Comments.First(_id=>_id.Id == id);
+            return _context.Comments.FirstOrDefault(_id=>_id.Id == id);
             
         }
 
@@ -56,11 +56,10 @@ namespace Project.Models
         public void Update(Comment comm)
         {
             var _comm = Find(comm.Id);
-            _comm.Id = comm.Id;
             _comm.Text = comm.Text;
             _comm.Grade = comm.Grade;
-            _comm.Image = comm.Image;
-            _comm.Created = comm.Created;
+            _context.SaveChanges();
+
         }
     }
 }
