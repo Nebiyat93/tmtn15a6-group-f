@@ -18,12 +18,6 @@ namespace Project.Controllers
         }
         public IComment Comments { get; set; }
 
-        [HttpGet("GetAll")]
-        public IEnumerable<Comment> GetAll()
-        {
-            return Comments.GetAll();
-        }
-
         [HttpGet("{id}", Name = "GetComm")]
         public IActionResult GetById(int Id)
         {
@@ -33,44 +27,37 @@ namespace Project.Controllers
             return new ObjectResult(comm);
         }
 
-        //[HttpPost]
-        //public IActionResult Create([FromBody] Comment comm)
-        //{
 
-        //    if (ModelState.IsValid)
-        //    {
-        //        if (string.IsNullOrWhiteSpace((comm.Text)))
-        //        {
-        //            return BadRequest();
-        //        }
-        //        else
-        //        {
-        //            Comments.Add(comm);
-        //            return CreatedAtRoute("GetComm", new { id = comm.Id }, comm);
-        //        }
-        //    }else
-        //    {
-        //        return BadRequest();
-        //    }
-            
-        //}
-
-        [HttpPut("{id}")]
+        [HttpPatch("{id}")]
         public IActionResult Update(int id, [FromBody] Comment comm)
         {
-            if (comm == null || comm.Id != id)
-            {
-                return BadRequest();
-            }
-
+            bool check = true;
+            List<string> err = new List<string>();
+            comm.Id = id;
             var p = Comments.Find(id);
             if (p == null)
             {
                 return NotFound();
             }
+            if (comm.Text.Length < 10 || comm.Text.Length >400)
+            {
+                err.Add("TextWrongLength");
+                check = false;
+            }
+            if(comm.Grade <1 || comm.Grade >5)
+            {
+                err.Add("GradeWrongValue");
+                check = false;
+            }
+            if (check)
+            {
+                Comments.Update(comm);
+                return new NoContentResult();
+            }
+            else
+                return BadRequest(new { error = err});
 
-            Comments.Update(comm);
-            return new NoContentResult();
+
         }
 
         [HttpDelete("{id}")]
