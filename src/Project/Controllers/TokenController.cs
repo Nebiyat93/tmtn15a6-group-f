@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Project.JWT
 {
@@ -19,11 +21,16 @@ namespace Project.JWT
     {
         private readonly TokenProviderOptions _options;
         private readonly UserManager<AccountIdentity> _userManager;
-
+        private static readonly string secretKey = "JorisMachtSehrGuteMusik";
         public TokenController(IOptions<TokenProviderOptions> options,
                                 UserManager<AccountIdentity> UserManager)
         {
-            _options = options.Value;
+
+        var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
+            _options = new TokenProviderOptions
+            {
+                SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
+            };
             _userManager = UserManager;
         }
 
@@ -41,9 +48,9 @@ namespace Project.JWT
                 var now = DateTime.UtcNow;
                 var claims = new Claim[]
                 {
-        new Claim(JwtRegisteredClaimNames.Sub, signInModel.UserName),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        new Claim(JwtRegisteredClaimNames.Iat, RecipeManager.generateUnixTimestamp().ToString(), ClaimValueTypes.Integer64)
+        new Claim("userId", user.Id),
+        new Claim("serialCode", Guid.NewGuid().ToString()),
+        new Claim("timeStamp", RecipeManager.generateUnixTimestamp().ToString(), ClaimValueTypes.Integer64)
                 };
 
                 // Create the JWT and write it to a string

@@ -45,6 +45,8 @@ namespace Project
             services.AddIdentity<AccountIdentity, IdentityRole>().
                 AddEntityFrameworkStores<MyDbContext>();
 
+            services.Configure<IdentityOptions>(o => o.Cookies.ApplicationCookie.AutomaticChallenge = false);
+
             services.AddMvc();
             //    .AddJsonOptions(options =>
             //{
@@ -88,13 +90,16 @@ namespace Project
                 ValidateLifetime = true,
 
                 // If you want to allow a certain amount of clock drift, set that here:
-                ClockSkew = TimeSpan.Zero
+                ClockSkew = TimeSpan.Zero,
+                ValidateAudience = false,
+                ValidateIssuer = false,
+                ValidateActor = false
             };
 
             app.UseJwtBearerAuthentication(new JwtBearerOptions
             {
                 AutomaticAuthenticate = true,
-                AutomaticChallenge = true,
+                AutomaticChallenge = false,
                 TokenValidationParameters = tokenValidationParameters
             });
 

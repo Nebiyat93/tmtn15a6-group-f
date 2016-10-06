@@ -6,6 +6,7 @@ using Project.Models;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Project.Controllers
@@ -80,10 +81,8 @@ namespace Project.Controllers
         
         
         [HttpPost("password")]
-        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([FromBody] Account acc)
         {
-
             if (ModelState.IsValid)
             {
                 List<string> err = new List<string>();
@@ -140,11 +139,16 @@ namespace Project.Controllers
            
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize]
         public async Task<IActionResult> Delete(string id)
-        { 
+        {
             // Auth missing.
-            
+
+            if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == _userManager.Users.FirstOrDefault(w => w.Id == id).ToString())
+            {
+                return Ok();
+            }
+
             var _acc = _userManager.Users.First(p => p.Id == id);
             if (_acc == null)
                 return NotFound();
@@ -154,7 +158,6 @@ namespace Project.Controllers
             if (res.Succeeded)
                 return new NoContentResult();
             return BadRequest(new { errors = res.Errors });
-            
         }
     }
     public class Account
