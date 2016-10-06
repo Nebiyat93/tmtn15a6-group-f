@@ -72,8 +72,6 @@ namespace Project
             app.UseApplicationInsightsRequestTelemetry();
             app.UseApplicationInsightsExceptionTelemetry();
 
-
-
             var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
             var options = new TokenProviderOptions
             {
@@ -93,18 +91,12 @@ namespace Project
                 ClockSkew = TimeSpan.Zero
             };
 
-            app.UseCookieAuthentication(new CookieAuthenticationOptions
+            app.UseJwtBearerAuthentication(new JwtBearerOptions
             {
                 AutomaticAuthenticate = true,
                 AutomaticChallenge = true,
-                AuthenticationScheme = "Cookie",
-                CookieName = "access_token",
-                TicketDataFormat = new CustomJwtDataFormat(
-                    SecurityAlgorithms.HmacSha256,
-                    tokenValidationParameters)
+                TokenValidationParameters = tokenValidationParameters
             });
-
-            //app.UseMiddleware<TokenProviderOptions>(Options.Create(options));
 
             app.UseMvc();
         }
