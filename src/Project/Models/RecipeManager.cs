@@ -14,9 +14,9 @@ namespace Project.Models
     {
         private MyDbContext _context = new MyDbContext();
 
-        public IEnumerable<Recipe> GetAll()
+        public IEnumerable<Recipe> GetAllSorted()
         {
-            return _context.Recipes;
+            return _context.Recipes.OrderByDescending(r => r.Created);
         }
 
         public void Add(Recipe recep)
@@ -42,12 +42,15 @@ namespace Project.Models
 
         public Recipe Find(int id)
         {
-            return (Recipe)_context.Recipes.Where(h => h.Id == id).First();
+            return (Recipe)_context.Recipes.Where(h => h.Id == id).FirstOrDefault();
         }
 
         public void Remove(int id)
         {
             var recep = _context.Recipes.Where(h => h.Id == id).First();
+
+            // also delete comments of the deleted recipe - not implemented yet!
+
             _context.Remove(recep);
             _context.SaveChanges();
         }

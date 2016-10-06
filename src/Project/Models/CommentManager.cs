@@ -27,9 +27,12 @@ namespace Project.Models
                 comm.Created = RecipeManager.generateUnixTimestamp();
             } while (_context.Comments.Any(h => h.Id == id)); //Loops as long as the existing row's id is the same as the newly generated one
 
-            var user = _context.Users.First(p => p.Id == comm.AccountId);
+            var user = _context.Users.First(p => p.Id == comm.CommenterId);
             user.Comments.Add(comm);
             _context.Users.Update(user);
+
+            var recep = _context.Recipes.First(r => r.Id == comm.RecipeId);
+            recep.Comments.Add(comm);
 
             _context.Comments.Add(comm);
             _context.SaveChanges();
