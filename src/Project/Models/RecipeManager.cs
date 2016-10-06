@@ -6,13 +6,18 @@ using Project.Models.Interfaces;
 using System.Collections.Concurrent;
 using Project.Models;
 using Project.SQL_Database;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace Project.Models
 {
     public class RecipeManager : IRecipe
     {
         private MyDbContext _context = new MyDbContext();
+
+        public IEnumerable<Recipe> GetAll()
+        {
+            return _context.Recipes;
+        }
 
         public IEnumerable<Recipe> GetAllSorted()
         {
@@ -42,7 +47,8 @@ namespace Project.Models
 
         public Recipe Find(int id)
         {
-            return (Recipe)_context.Recipes.Where(h => h.Id == id).FirstOrDefault();
+            return (Recipe)_context.Recipes.Include(u => u.Comments).ToList().FirstOrDefault(p => p.Id == id);
+          
         }
 
         public void Remove(int id)
