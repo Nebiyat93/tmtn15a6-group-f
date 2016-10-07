@@ -40,6 +40,7 @@ namespace Project
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
+            services.AddCors();
             services.AddApplicationInsightsTelemetry(Configuration);
 
             services.AddIdentity<AccountIdentity, IdentityRole>().
@@ -102,6 +103,8 @@ namespace Project
                 AutomaticChallenge = false,
                 TokenValidationParameters = tokenValidationParameters
             });
+
+            app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().WithExposedHeaders("Location"));
 
             app.UseMvc();
         }

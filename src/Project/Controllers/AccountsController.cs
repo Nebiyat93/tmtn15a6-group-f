@@ -15,7 +15,6 @@ namespace Project.Controllers
     public class AccountsController : Controller
     {
         private readonly UserManager<AccountIdentity> _userManager;
-
         public AccountsController(UserManager<AccountIdentity> userManager)
         {
             _userManager = userManager;
@@ -32,7 +31,7 @@ namespace Project.Controllers
             var item = _userManager.Users.Include(u => u.Recipes).ToList().FirstOrDefault(p => p.Id == Id);
             if (item == null)
                 return NotFound();
-            return Ok(new {item.Id, item.UserName, item.Latitude, item.Longitude});
+            return Ok(new { item.Id, item.UserName, item.Latitude, item.Longitude });
         }
 
         /// <summary>
@@ -59,27 +58,6 @@ namespace Project.Controllers
             return Ok(item.Comments.Select(w => new { w.Id, w.RecipeId, w.Text, w.Grade, w.Created }));
         }
 
-        [HttpGet("{id}/favorites")]
-        public IActionResult GetFavoritesById(string Id)
-        {
-            var item = _userManager.Users.Include(u => u.Favorites).ToList().FirstOrDefault(p => p.Id == Id);
-            if (item == null)
-                return NotFound();
-            return Ok(item.Favorites.Select(w => new { w.RecipeId, w.Recipe.Name, w.Recipe.Created }));
-        }
-
-        [HttpPut("{id}/favorites")]
-        public IActionResult UpdateFavoritesById(string Id)
-        {
-            var item = _userManager.Users.Include(u => u.Favorites).ToList().FirstOrDefault(p => p.Id == Id);
-            if (item == null)
-                return NotFound();
-            
-            return Ok(item.Favorites.Select(w => new { w.RecipeId, w.Recipe.Name, w.Recipe.Created }));
-        }
-
-        
-        
         [HttpPost("password")]
         public async Task<IActionResult> Create([FromBody] Account acc)
         {
@@ -100,64 +78,64 @@ namespace Project.Controllers
                 if (res.Succeeded)
                 {
                     var item = _userManager.Users.FirstOrDefault(p => p.UserName == acc.UserName);
-                    
-                    return CreatedAtRoute("GetAcc", new { id = item.Id }, new { item.Id, item.UserName, item.Longitude, item.Latitude } );
+
+                    return CreatedAtRoute("GetAcc", new { id = item.Id }, new { item.Id, item.UserName, item.Longitude, item.Latitude });
                 }
                 return BadRequest(new { errors = res.Errors });
             }
             return BadRequest();
         }
 
-
-        [HttpPatch("{id}")]
+        /// <summary>
+        /// Updates user information
+        /// </summary>
+        /// <param name="id">User id</param>
+        /// <param name="acc"></param>
+        /// <returns></returns>
+        [HttpPatch("{id}"), Authorize]
         public async Task<IActionResult> Update(string id, [FromBody] Account acc)
         {
             var _acc = _userManager.Users.First(p => p.Id == id);
-
-            if (_acc == null)
-                return NotFound();
-    
-            if (acc.Latitude != null || acc.Longitude != null)
+            if (_acc != null)
             {
-                
-                if(acc.Longitude != null)
-                    _acc.Longitude = acc.Longitude;
-                if(acc.Latitude != null)
-                    _acc.Latitude = acc.Latitude;
-
-                var res = await _userManager.UpdateAsync(_acc);
-                if (res.Succeeded)
+                if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == _acc.Id)
                 {
-                    return NoContent();
-                }
-                return BadRequest(new { errors = res.Errors });
-            }
+                    if (acc.UserName != null || acc.Password != null)
+                        return Unauthorized();
 
-            return BadRequest();    
-            
-            
-           
+                    if (acc.Longitude != null)
+                        _acc.Longitude = acc.Longitude;
+                    if (acc.Latitude != null)
+                        _acc.Latitude = acc.Latitude;
+
+                    var res = await _userManager.UpdateAsync(_acc);
+                    if (res.Succeeded)
+                        return NoContent();
+                }
+                else return Unauthorized();
+            }
+            return NotFound();
+
         }
 
+        /// <summary>
+        /// Deletes a user
+        /// </summary>
+        /// <param name="id">User id</param>
+        /// <returns></returns>
         [HttpDelete("{id}"), Authorize]
         public async Task<IActionResult> Delete(string id)
         {
-            // Auth missing.
-
-            if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == _userManager.Users.FirstOrDefault(w => w.Id == id).ToString())
+            var _acc = _userManager.Users.FirstOrDefault(p => p.Id == id);
+            if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == _acc.Id)
             {
-                return Ok();
+                var res = await _userManager.DeleteAsync(_acc);
+                if (res.Succeeded)
+                    return NoContent();
+                else return BadRequest(new { errors = res.Errors });
             }
-
-            var _acc = _userManager.Users.First(p => p.Id == id);
-            if (_acc == null)
+            else
                 return NotFound();
-
-            var res = await _userManager.DeleteAsync(_acc);
-
-            if (res.Succeeded)
-                return new NoContentResult();
-            return BadRequest(new { errors = res.Errors });
         }
     }
     public class Account

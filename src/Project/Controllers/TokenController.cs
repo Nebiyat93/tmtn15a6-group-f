@@ -49,7 +49,6 @@ namespace Project.JWT
                 var claims = new Claim[]
                 {
         new Claim("userId", user.Id),
-        new Claim("serialCode", Guid.NewGuid().ToString()),
         new Claim("timeStamp", RecipeManager.generateUnixTimestamp().ToString(), ClaimValueTypes.Integer64)
                 };
 

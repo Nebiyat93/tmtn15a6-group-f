@@ -10,7 +10,7 @@ namespace Project.JWT
     {
         public string Path { get; set; } = "/token";
 
-        public TimeSpan Expiration { get; set; } = TimeSpan.FromMinutes(5);
+        public TimeSpan Expiration { get; set; } = TimeSpan.FromDays(10);
 
         public SigningCredentials SigningCredentials { get; set; }
     }
