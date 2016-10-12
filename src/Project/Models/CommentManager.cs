@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Project.Models.Interfaces;
 using Project.SQL_Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace Project.Models
 {
@@ -58,7 +59,18 @@ namespace Project.Models
             var _comm = Find(comm.Id);
             _comm.Text = comm.Text;
             _comm.Grade = comm.Grade;
+            _context.Comments.Update(_comm);
             _context.SaveChanges();
+
+
+            // Database is updated immediately - but "get recipe/comment" gets the old version until restart :(
+
+            //var recep = _context.Recipes.First(r => r.Id == _comm.RecipeId);
+            var recep = _context.Recipes.Include(u => u.Comments).First(r => r.Id == _comm.RecipeId);
+            _context.Recipes.Update(recep);
+
+            _context.SaveChanges();
+
 
         }
     }
