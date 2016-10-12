@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Project.Models.Interfaces;
 using Project.Models;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -61,14 +62,19 @@ namespace Project.Controllers
             return Ok(item.Select(w => new { w.Id, w.Name, w.Created }));
         }
 
-        [HttpPost]
+        [HttpPost, Authorize]
         public IActionResult Create([FromBody] Recipe recep)
         {
-            if (recep == null)
-                return BadRequest();
-            Recipes.Add(recep);
-
-            return CreatedAtRoute("GetRecep", new { id = recep.Id }, new { recep.Name, recep.Description, recep.CreatorId, recep.Directions});
+            if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == recep.CreatorId)
+            {
+                if (recep == null)
+                    return BadRequest();
+                Recipes.Add(recep);
+                return CreatedAtRoute("GetRecep", new { id = recep.Id }, new { recep.Name, recep.Description, recep.CreatorId, recep.Directions });
+            }
+            else
+                return Unauthorized();
+            
         }
 
         // for Image!!
