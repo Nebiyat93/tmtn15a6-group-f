@@ -16,11 +16,6 @@ namespace Project.Models
 
         private MyDbContext _context = new MyDbContext();
 
-        public DirectionManager()
-        {
-            Add(new Direction { Id = 0 });
-        }
-
         public IEnumerable<Direction> GetAll()
         {
             return _context.Directions;

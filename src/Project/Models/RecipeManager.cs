@@ -48,7 +48,6 @@ namespace Project.Models
         public Recipe Find(int id)
         {
             return (Recipe)_context.Recipes.Include(u => u.Comments).ToList().FirstOrDefault(p => p.Id == id);
-          
         }
 
         public void Remove(int id)
