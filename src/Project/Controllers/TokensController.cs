@@ -17,12 +17,12 @@ using System.Text;
 namespace Project.JWT
 {
     [Route("api/v1/[controller]")]
-    public class TokenController : Controller
+    public class TokensController : Controller
     {
         private readonly TokenProviderOptions _options;
         private readonly UserManager<AccountIdentity> _userManager;
         private static readonly string secretKey = "JorisMachtSehrGuteMusik";
-        public TokenController(IOptions<TokenProviderOptions> options,
+        public TokensController(IOptions<TokenProviderOptions> options,
                                 UserManager<AccountIdentity> UserManager)
         {
 

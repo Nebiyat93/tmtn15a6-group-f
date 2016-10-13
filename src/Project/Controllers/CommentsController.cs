@@ -11,9 +11,9 @@ using Microsoft.AspNetCore.Authorization;
 namespace Project.Controllers
 {
     [Route("api/v1/[controller]")]
-    public class CommentController : Controller
+    public class CommentsController : Controller
     {
-        public CommentController(IComment comm)
+        public CommentsController(IComment comm)
         {
             Comments = comm;
         }

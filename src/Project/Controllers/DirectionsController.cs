@@ -9,9 +9,9 @@ using Project.Models;
 namespace Project.Controllers
 {
     [Route("api/v1/[controller]")]
-    public class DirectionController : Controller
+    public class DirectionsController : Controller
     {
-        public DirectionController(IDirection dir)
+        public DirectionsController(IDirection dir)
         {
             Directions = dir;
         }
