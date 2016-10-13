@@ -27,20 +27,20 @@ namespace Project.Controllers
         /// <returns></returns>
         [HttpGet("{id}", Name = "GetRecep")]
         public IActionResult GetById(int Id)
-        {        
+        {
             var item = Recipes.Find(Id);
             if (item == null)
                 return NotFound();
-            return Ok( new { item.Id, item.Name, item.CreatorId });
+            return Ok(new { item.Id, item.Name, item.CreatorId });
         }
 
         [HttpGet]
         public IActionResult GetNewest([FromQuery]int page)
         {
-            var item = Recipes.GetAllSorted().Skip(2 * (page-1)).Take(2).ToList();
-            if (page == 0 | item.Count == 0 )
+            var item = Recipes.GetAllSorted().Skip(2 * (page - 1)).Take(2).ToList();
+            if (page == 0 || item.Count == 0)
                 return NotFound();
-            return Ok(item.Select(w => new { w.Id, w.Name, w.Created}));
+            return Ok(item.Select(w => new { w.Id, w.Name, w.Created }));
         }
 
         [HttpGet("{id}/comments")]
@@ -64,31 +64,13 @@ namespace Project.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] Recipe recep)
         {
-            List<string> _errors = new List<string>();
-            if (recep == null)
-                return BadRequest();
-            if (string.IsNullOrWhiteSpace(recep.Name))
-                _errors.Add("NameMissing");
-            if (recep.Name.Length < 5 || recep.Name.Length > 70)
-                _errors.Add("NameWrongLength");
-            if (string.IsNullOrWhiteSpace(recep.Description))
-                _errors.Add("DescriptionMissing");
-            if (recep.Description.Length < 10 && recep.Description.Length > 300)
-                _errors.Add("DescriptionWrongLength");
-            if (recep.Directions == null)
-                _errors.Add("DirectionsMissing");
-            if (string.IsNullOrWhiteSpace(recep.Directions.Select(w => w.Order).ToString()))
-                _errors.Add("DirectionOrderMissing");
-            if (string.IsNullOrWhiteSpace(recep.Directions.Select(w => w.Description).ToString()))
-                _errors.Add("DirectionDescriptionMissing");
-
-            var descripLength = recep.Directions.Select(w => w.Description).ToString().Length;
-            if (descripLength < 10 || descripLength > 300)
-                _errors.Add("DirectionDescriptionWrongLength");
-            else
+            if(ModelState.IsValid)
+            {
                 Recipes.Add(recep);
-
-            return CreatedAtRoute("GetRecep", new { id = recep.Id }, new { recep.Name, recep.Description, recep.CreatorId, recep.Directions});
+                return CreatedAtRoute("GetRecep", new { id = recep.Id }, new { recep.Name, recep.Description, recep.CreatorId, recep.Directions });
+            }
+            else
+                return BadRequest(new { errors = ModelState.Values.Select(w => w.Errors)});
         }
 
         // for Image!!
@@ -116,7 +98,7 @@ namespace Project.Controllers
             comm.RecipeId = id;
             s.Add(comm);
 
-            return CreatedAtRoute("GetComm", new {  comm.Text, comm.Grade, comm.CommenterId });
+            return CreatedAtRoute("GetComm", new { comm.Text, comm.Grade, comm.CommenterId });
         }
 
         [HttpPatch("{id}")]

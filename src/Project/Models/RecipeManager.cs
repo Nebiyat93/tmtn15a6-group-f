@@ -39,9 +39,9 @@ namespace Project.Models
 
 
             ///No logic for account existance yet!!!!
-            var user = _context.Users.First(p => p.Id == recep.CreatorId);
-            user.Recipes.Add(recep);
-            _context.Users.Update(user);
+            //var user = _context.Users.First(p => p.Id == recep.CreatorId);
+            //user.Recipes.Add(recep);
+            //_context.Users.Update(user);
             _context.SaveChanges();
         }
 

@@ -18,12 +18,15 @@ namespace Project.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         
-        //[MaxLength(70)][ MinLength(5)]
+        [Required(ErrorMessage = "MissingName")]
+        [StringLength(70, MinimumLength = 5, ErrorMessage = "NameWrongLength")]
         public string Name { get; set; }
         
-        //[MaxLength(300)][ MinLength(10)]
+        [Required(ErrorMessage = "MissingDescription")]
+        [StringLength(300, MinimumLength = 10, ErrorMessage = "DescriptionWrongLength")]
         public string Description { get; set; }
-        //[MaxLength(200)][MinLength(0)]
+
+        [StringLength(200, MinimumLength = 10)]
         public string Image { get; set; }
         public int Created { get; set; }
 

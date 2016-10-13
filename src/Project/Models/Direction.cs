@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace Project.Models
 {
     public class Direction
@@ -10,10 +11,10 @@ namespace Project.Models
         public Direction() { }
         [Key]
         public int Id { get; set; }
-        //[Required]
+        [Required(ErrorMessage = "DirectionOrderMissing")]
         public int Order { get; set; }
-        //[Required]
-        //[MaxLength(120)][ MinLength(5)]
+        [Required(ErrorMessage = "DirectionDescriptionMissing")]
+        [StringLength(120, MinimumLength = 5, ErrorMessage = "DirectionDescriptionWrongLength")]
         public string Description { get; set; }
 
         public int RecipeId { get; set; }
