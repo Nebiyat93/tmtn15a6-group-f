@@ -18,12 +18,12 @@ namespace Project.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         
-        [MaxLength(70)][ MinLength(5)]
+        //[MaxLength(70)][ MinLength(5)]
         public string Name { get; set; }
         
-        [MaxLength(300)][ MinLength(10)]
+        //[MaxLength(300)][ MinLength(10)]
         public string Description { get; set; }
-        [MaxLength(200)][MinLength(0)]
+        //[MaxLength(200)][MinLength(0)]
         public string Image { get; set; }
         public int Created { get; set; }
 

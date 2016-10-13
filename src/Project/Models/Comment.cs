@@ -13,19 +13,19 @@ namespace Project.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
-        [Required]
-        [MaxLength(400)][MinLength(10)]
+        //[Required]
+        //[MaxLength(400)][MinLength(10)]
         public string Text { get; set; }
-        [Required]
-        [Range(1, 5)]
+        //[Required]
+        //[Range(1, 5)]
         public int Grade { get; set; }
-        [MaxLength(200)][MinLength(0)]
+        //[MaxLength(200)][MinLength(0)]
         public string Image { get; set; }
-        [Required]
+        //[Required]
         public int Created { get; set; } 
-        [Required]
+        //[Required]
         public string CommenterId { get; set; }
-        [Required]
+        //[Required]
         public int RecipeId { get; set; }
 
         public virtual AccountIdentity AccountIdentity { get; set; } 

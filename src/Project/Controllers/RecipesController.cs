@@ -61,28 +61,32 @@ namespace Project.Controllers
             return Ok(item.Select(w => new { w.Id, w.Name, w.Created }));
         }
 
-        [HttpPost("recipes")]
+        [HttpPost]
         public IActionResult Create([FromBody] Recipe recep)
         {
             List<string> _errors = new List<string>();
             if (recep == null)
                 return BadRequest();
-            else if (string.IsNullOrWhiteSpace(recep.Name))
+            if (string.IsNullOrWhiteSpace(recep.Name))
                 _errors.Add("NameMissing");
-            else if (recep.Name.Length < 5 || recep.Name.Length > 70)
+            if (recep.Name.Length < 5 || recep.Name.Length > 70)
                 _errors.Add("NameWrongLength");
-            else if (string.IsNullOrWhiteSpace(recep.Description))
+            if (string.IsNullOrWhiteSpace(recep.Description))
                 _errors.Add("DescriptionMissing");
-            else if (recep.Description.Length < 10 && recep.Description.Length > 300)
+            if (recep.Description.Length < 10 && recep.Description.Length > 300)
                 _errors.Add("DescriptionWrongLength");
-            else if (recep.Directions == null)
+            if (recep.Directions == null)
                 _errors.Add("DirectionsMissing");
-            else if (string.IsNullOrWhiteSpace(recep.Directions.Select(w => w.Order).ToString()))
+            if (string.IsNullOrWhiteSpace(recep.Directions.Select(w => w.Order).ToString()))
                 _errors.Add("DirectionOrderMissing");
-            else if (string.IsNullOrWhiteSpace(recep.Directions.Select(w => w.Description).ToString()))
+            if (string.IsNullOrWhiteSpace(recep.Directions.Select(w => w.Description).ToString()))
                 _errors.Add("DirectionDescriptionMissing");
+
+            var descripLength = recep.Directions.Select(w => w.Description).ToString().Length;
+            if (descripLength < 10 || descripLength > 300)
+                _errors.Add("DirectionDescriptionWrongLength");
             else
-            Recipes.Add(recep);
+                Recipes.Add(recep);
 
             return CreatedAtRoute("GetRecep", new { id = recep.Id }, new { recep.Name, recep.Description, recep.CreatorId, recep.Directions});
         }

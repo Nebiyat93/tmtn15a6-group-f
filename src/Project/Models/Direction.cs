@@ -10,10 +10,10 @@ namespace Project.Models
         public Direction() { }
         [Key]
         public int Id { get; set; }
-        [Required]
+        //[Required]
         public int Order { get; set; }
-        [Required]
-        [MaxLength(120)][ MinLength(5)]
+        //[Required]
+        //[MaxLength(120)][ MinLength(5)]
         public string Description { get; set; }
 
         public int RecipeId { get; set; }
