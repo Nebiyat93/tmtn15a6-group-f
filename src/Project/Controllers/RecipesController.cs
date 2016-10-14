@@ -29,9 +29,10 @@ namespace Project.Controllers
         public IActionResult GetById(int Id)
         {
             var item = Recipes.Find(Id);
+            var creator = new { item.AccountIdentity.Id, item.AccountIdentity.UserName };
             if (item == null)
                 return NotFound();
-            return Ok(new { item.Id, item.Name, item.CreatorId });
+            return Ok(new { item.Id, item.Name, item.Description, /* "recipe.CREATOR is undefined" */ item.CreatorId, item.Directions, creator.UserName});
         }
 
         [HttpGet]

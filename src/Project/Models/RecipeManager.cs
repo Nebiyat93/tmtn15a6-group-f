@@ -21,7 +21,7 @@ namespace Project.Models
 
         public IEnumerable<Recipe> GetAllSorted()
         {
-            return _context.Recipes.OrderByDescending(r => r.Created);
+            return _context.Recipes.Include(u => u.Comments).Include(d => d.Directions).OrderByDescending(r => r.Created);
         }
 
         public void Add(Recipe recep)
@@ -47,7 +47,7 @@ namespace Project.Models
 
         public Recipe Find(int id)
         {
-            return (Recipe)_context.Recipes.Include(u => u.Comments).ToList().FirstOrDefault(p => p.Id == id);
+            return (Recipe)_context.Recipes.Include(u => u.AccountIdentity).Include(u => u.Comments).Include(d => d.Directions).ToList().FirstOrDefault(p => p.Id == id);
         }
 
         public void Remove(int id)
