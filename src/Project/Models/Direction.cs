@@ -11,8 +11,10 @@ namespace Project.Models
         public Direction() { }
         [Key]
         public int Id { get; set; }
+
         [Required(ErrorMessage = "DirectionOrderMissing")]
         public int Order { get; set; }
+
         [Required(ErrorMessage = "DirectionDescriptionMissing")]
         [StringLength(120, MinimumLength = 5, ErrorMessage = "DirectionDescriptionWrongLength")]
         public string Description { get; set; }

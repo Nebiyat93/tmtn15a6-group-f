@@ -8,7 +8,6 @@ using Project.Models;
 
 namespace Project.Controllers
 {
-    [Route("api/v1/[controller]")]
     public class DirectionsController : Controller
     {
         public DirectionsController(IDirection dir)

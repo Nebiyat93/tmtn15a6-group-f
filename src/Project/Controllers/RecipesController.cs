@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Project.Models.Interfaces;
 using Project.Models;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,6 +15,7 @@ namespace Project.Controllers
     public class RecipesController : Controller
     {
         private Models.CommentManager s = new CommentManager();
+
         public RecipesController(IRecipe recep)
         {
             Recipes = recep;
@@ -31,7 +33,7 @@ namespace Project.Controllers
             var item = Recipes.Find(Id);
             if (item == null)
                 return NotFound();
-            return Ok(new { item.Id, item.Name, item.CreatorId });
+            return Ok(new { item.Id, item.Name, item.Description, item.CreatorId, item.Image, item.Created, item.Directions });
         }
 
         [HttpGet]
@@ -62,15 +64,15 @@ namespace Project.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] Recipe recep)
+        public IActionResult Create([FromBody] Recipe recep) //Cannot add direction????
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                Recipes.Add(recep);
+                Recipes.Add(recep, this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value);
                 return CreatedAtRoute("GetRecep", new { id = recep.Id }, new { recep.Name, recep.Description, recep.CreatorId, recep.Directions });
             }
             else
-                return BadRequest(new { errors = ModelState.Values.Select(w => w.Errors)});
+                return BadRequest(new { errors = ModelState.Values.Select(w => w.Errors.Select(p => p.ErrorMessage)) });
         }
 
         // for Image!!
@@ -101,31 +103,34 @@ namespace Project.Controllers
             return CreatedAtRoute("GetComm", new { comm.Text, comm.Grade, comm.CommenterId });
         }
 
-        [HttpPatch("{id}")]
+        [HttpPatch("{id}"), Authorize] //NOT FINISHED, not able to update direction!
         public IActionResult Update(int id, [FromBody] Recipe newRecipe)
         {
-            var oldRecipe = Recipes.Find(id);
+            if (ModelState.IsValid)
+            {
+                var oldRecipe = Recipes.Find(id);
+                if (newRecipe == null || oldRecipe == null || oldRecipe.Id != id)
+                    return NotFound();
+                else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == id.ToString())
+                    Recipes.Update(newRecipe, oldRecipe);
 
-            if (newRecipe == null || oldRecipe == null || oldRecipe.Id != id)
-                return NotFound();
-
-            // Error Messages missing!! (Bad Request)
-
-            Recipes.Update(newRecipe, oldRecipe);
-            return new NoContentResult();
+                return new NoContentResult();
+            }
+            return BadRequest(new { errors = ModelState.Values.Select(w => w.Errors.Select(p => p.ErrorMessage))});
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize]
         public IActionResult Delete(int id)
         {
-            // Auth missing.
-
             var acc = Recipes.Find(id);
             if (acc == null)
                 return NotFound();
-
-            Recipes.Remove(id);
-            return new NoContentResult();
+            else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == id.ToString())
+            {
+                Recipes.Remove(id);
+                return new NoContentResult();
+            }
+            else return Unauthorized();
         }
     }
 }

@@ -9,16 +9,17 @@ namespace Project.Models
 {
     public class Recipe
     {
+        private Direction h = new Direction();
         public Recipe()
         {
-            Comments = new HashSet<Comment>();
-            Directions = new HashSet<Direction>(); 
+            Directions = new List<Direction>();
+            Comments = new List<Comment>();
         }
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         
-        [Required(ErrorMessage = "MissingName")]
+        [Required(ErrorMessage = "NameMissing")]
         [StringLength(70, MinimumLength = 5, ErrorMessage = "NameWrongLength")]
         public string Name { get; set; }
         
@@ -33,6 +34,7 @@ namespace Project.Models
         public string CreatorId {get;set;}
 
         public ICollection<Comment> Comments { get; set; } 
+        [MinLength(1, ErrorMessage = "DirectionsMissing")]
         public ICollection<Direction> Directions { get; set; } 
         public ICollection<Favorites> Favorites { get; set; }
 

@@ -24,7 +24,7 @@ namespace Project.Models
             return _context.Recipes.OrderByDescending(r => r.Created);
         }
 
-        public void Add(Recipe recep)
+        public void Add(Recipe recep, string userId)
         {
             int id;
             do
@@ -33,7 +33,8 @@ namespace Project.Models
                 if (id < 0)
                     id *= -1;
                 recep.Id = id;
-                recep.Created = generateUnixTimestamp(); 
+                recep.CreatorId = userId;
+                recep.Created = generateUnixTimestamp();
             } while (_context.Recipes.Any(h => h.Id == id)); //Loops as long as the existing row's id is the same as the newly generated one
             _context.Recipes.Add(recep);
 
@@ -53,21 +54,18 @@ namespace Project.Models
         public void Remove(int id)
         {
             var recep = _context.Recipes.Where(h => h.Id == id).First();
-
-            // also delete comments of the deleted recipe - not implemented yet!
-
             _context.Remove(recep);
             _context.SaveChanges();
         }
 
         public void Update(Recipe newRecipe, Recipe oldRecipe)
         {
-            if (newRecipe.Name != null)
+            if (!string.IsNullOrWhiteSpace(newRecipe.Name))
                 oldRecipe.Name = newRecipe.Name;
-            if (newRecipe.Description != null)
+            if (!string.IsNullOrWhiteSpace(newRecipe.Description))
                 oldRecipe.Description = newRecipe.Description;
-            if (newRecipe.Created != 0)
-                oldRecipe.Created = generateUnixTimestamp();
+            oldRecipe.Created = generateUnixTimestamp();
+
             _context.SaveChanges();
         }
 

@@ -100,6 +100,7 @@ namespace Project.Controllers
             {
                 if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == _acc.Id)
                 {
+                    //A user cannot change username or password
                     if (acc.UserName != null || acc.Password != null)
                         return Unauthorized();
 
