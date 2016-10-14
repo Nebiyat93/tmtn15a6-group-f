@@ -10,13 +10,19 @@ namespace Project.Models
     public class CommentManager : IComment
     {
 
-        private MyDbContext _context = new MyDbContext();
+        private MyDbContext _context;
+        public CommentManager(MyDbContext db)
+        {
+            this._context = db;
+
+        }
+
         public IEnumerable<Comment> GetAll()
         {
             return _context.Comments;
         }
 
-        public void Add(Comment comm)
+        public void Add(Comment comm, string commenterId)
         {
             int id;
             do
@@ -28,7 +34,7 @@ namespace Project.Models
                 comm.Created = RecipeManager.generateUnixTimestamp();
             } while (_context.Comments.Any(h => h.Id == id)); //Loops as long as the existing row's id is the same as the newly generated one
 
-            var user = _context.Users.First(p => p.Id == comm.CommenterId);
+            var user = _context.Users.First(p => p.Id == commenterId);
             user.Comments.Add(comm);
             _context.Users.Update(user);
             _context.Comments.Add(comm);
@@ -59,16 +65,6 @@ namespace Project.Models
             var _comm = Find(comm.Id);
             _comm.Text = comm.Text;
             _comm.Grade = comm.Grade;
-            _context.Comments.Update(_comm);
-            _context.SaveChanges();
-
-
-            // Database is updated immediately - but "get recipe/comment" gets the old version until restart :(
-
-            //var recep = _context.Recipes.First(r => r.Id == _comm.RecipeId);
-            var recep = _context.Recipes.Include(u => u.Comments).First(r => r.Id == _comm.RecipeId);
-            _context.Recipes.Update(recep);
-
             _context.SaveChanges();
 
 

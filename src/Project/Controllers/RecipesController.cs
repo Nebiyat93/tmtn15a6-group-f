@@ -14,11 +14,13 @@ namespace Project.Controllers
     [Route("api/v1/[controller]")]
     public class RecipesController : Controller
     {
-        private Models.CommentManager s = new CommentManager();
+        
 
-        public RecipesController(IRecipe recep)
-        {
+        private IComment CommManager;
+
+        public RecipesController(IComment commentManager, IRecipe recep){
             Recipes = recep;
+            this.CommManager = commentManager;
         }
         public IRecipe Recipes { get; set; }
 
@@ -33,7 +35,7 @@ namespace Project.Controllers
             var item = Recipes.Find(Id);
             if (item == null)
                 return NotFound();
-            var creator = new List<string> { item.CreatorId, item.AccountIdentity.UserName, };
+            var creator = new List<string> { item.CreatorId, item.AccountIdentity.UserName };
             return Ok(new { item.Id, item.Name, item.Description,creator, item.Image, item.Created, item.Directions });
         }
 
@@ -52,7 +54,9 @@ namespace Project.Controllers
             var item = Recipes.Find(Id);
             if (item == null)
                 return NotFound();
-            return Ok(item.Comments.Select(w => new { w.Text, w.Grade, w.CommenterId }));
+            var commenter = new List<string> { item.CreatorId, item.AccountIdentity.UserName };
+            var p = item.Comments.Select(w => new { w.Text, w.Grade, commenter, w.Id });
+            return Ok(p);
         }
 
         [HttpGet("search")]
@@ -99,7 +103,8 @@ namespace Project.Controllers
 
             // Create a comment --> implementation missing
             comm.RecipeId = id;
-            s.Add(comm);
+            var userId = this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value;
+            CommManager.Add(comm, userId);
 
             return CreatedAtRoute("GetComm", new { comm.Text, comm.Grade, comm.CommenterId });
         }

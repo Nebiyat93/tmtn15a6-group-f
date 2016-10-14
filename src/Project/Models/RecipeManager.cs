@@ -12,7 +12,12 @@ namespace Project.Models
 {
     public class RecipeManager : IRecipe
     {
-        private MyDbContext _context = new MyDbContext();
+        private MyDbContext _context;
+
+        public RecipeManager(MyDbContext context)
+        {
+            _context = context;
+        }
 
         public IEnumerable<Recipe> GetAll()
         {
