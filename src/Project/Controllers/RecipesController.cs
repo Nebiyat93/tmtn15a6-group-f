@@ -33,7 +33,8 @@ namespace Project.Controllers
             var item = Recipes.Find(Id);
             if (item == null)
                 return NotFound();
-            return Ok(new { item.Id, item.Name, item.Description, item.CreatorId, item.Image, item.Created, item.Directions });
+            var creator = new List<string> { item.CreatorId, item.AccountIdentity.UserName, };
+            return Ok(new { item.Id, item.Name, item.Description,creator, item.Image, item.Created, item.Directions });
         }
 
         [HttpGet]

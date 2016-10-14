@@ -41,8 +41,8 @@ namespace Project.Models
 
         public Direction Find(int id)
         {
-           
-            return _context.Directions.Where(h => h.Id == id).First();
+
+            return _context.Directions.Where(h => h.Id == id).FirstOrDefault();
         }
 
         public void Remove(int id)
