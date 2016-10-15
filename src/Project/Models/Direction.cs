@@ -19,10 +19,11 @@ namespace Project.Models
         [StringLength(120, MinimumLength = 5, ErrorMessage = "DirectionDescriptionWrongLength")]
         public string Description { get; set; }
 
+        [ForeignKey("Id")]
         public int RecipeId { get; set; }
         public Recipe Recipe { get; set; } 
 
     }
 
-    
+
 }

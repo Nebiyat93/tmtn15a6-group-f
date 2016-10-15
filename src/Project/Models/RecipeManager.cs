@@ -12,7 +12,7 @@ namespace Project.Models
 {
     public class RecipeManager : IRecipe
     {
-        private readonly MyDbContext _context;
+        private MyDbContext _context;
 
         public RecipeManager(MyDbContext context)
         {
@@ -54,8 +54,8 @@ namespace Project.Models
 
         public void Remove(int id)
         {
-            var recep = _context.Recipes.Where(h => h.Id == id).First();
-            _context.Remove(recep);
+            var recep = _context.Recipes.FirstOrDefault(h => h.Id == id);
+            _context.Recipes.Remove(recep);
             _context.SaveChanges();
         }
 
@@ -68,6 +68,7 @@ namespace Project.Models
             oldRecipe.Created = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
             if (!string.IsNullOrWhiteSpace(newRecipe.Image))
                 oldRecipe.Image = newRecipe.Image;
+
             _context.Update(oldRecipe);
             _context.SaveChanges();
         }

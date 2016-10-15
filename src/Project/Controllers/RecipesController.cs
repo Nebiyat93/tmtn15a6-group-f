@@ -75,7 +75,8 @@ namespace Project.Controllers
             if (ModelState.IsValid)
             {
                 Recipes.Add(recep, this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value);
-                return CreatedAtRoute("GetRecep", new { id = recep.Id }, new { recep.Name, recep.Description, recep.CreatorId, recep.Directions });
+                var direc = recep.Directions.Select(w => new { w.Order, w.Description });
+                return CreatedAtRoute("GetRecep", new { id = recep.Id }, new { recep.Name, recep.Description, recep.CreatorId, recep.Id, direc });
             }
             else
                 return BadRequest(new { errors = ModelState.Values.Select(w => w.Errors.Select(p => p.ErrorMessage)) });
@@ -120,12 +121,15 @@ namespace Project.Controllers
         [HttpPatch("{id}"), Authorize] //NOT FINISHED, not able to update direction!
         public IActionResult Update(int id, [FromBody] Recipe newRecipe)
         {
+            //ModelState.Remove("Name");
+            //ModelState.Remove("Description");
+
             if (ModelState.IsValid)
             {
                 var oldRecipe = Recipes.Find(id);
                 if (newRecipe == null || oldRecipe == null || oldRecipe.Id != id)
                     return NotFound();
-                else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == id.ToString())
+                else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == oldRecipe.CreatorId)
                 {
                     Recipes.Update(newRecipe, oldRecipe);
                     return new NoContentResult();
@@ -141,7 +145,7 @@ namespace Project.Controllers
             var acc = Recipes.Find(id);
             if (acc == null)
                 return NotFound();
-            else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == id.ToString())
+            else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == acc.CreatorId)
             {
                 Recipes.Remove(id);
                 return new NoContentResult();
