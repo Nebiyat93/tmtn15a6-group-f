@@ -94,18 +94,18 @@ namespace Project.Controllers
             return new NoContentResult();
         }
 
-        [HttpPost("{id}/comments")]
+        [HttpPost("{id}/comments"), Authorize]
         public IActionResult CreateComment(int id, [FromBody] Comment comm)
         {
-            if (comm == null)
-                return BadRequest();
+            if (ModelState.IsValid)
+            {
+                comm.RecipeId = id;
+                var userId = this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value;
+                CommManager.Add(comm, userId);
+                return CreatedAtRoute("GetComm", new { comm.Text, comm.Grade, comm.CommenterId });
+            }
+            else return BadRequest();
 
-            // Create a comment --> implementation missing
-            comm.RecipeId = id;
-            var userId = this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value;
-            CommManager.Add(comm, userId);
-
-            return CreatedAtRoute("GetComm", new { comm.Text, comm.Grade, comm.CommenterId });
         }
 
         [HttpPatch("{id}"), Authorize] //NOT FINISHED, not able to update direction!
@@ -114,14 +114,16 @@ namespace Project.Controllers
             if (ModelState.IsValid)
             {
                 var oldRecipe = Recipes.Find(id);
-                if (newRecipe == null || oldRecipe == null || oldRecipe.Id != id)
+                if (oldRecipe == null || oldRecipe.Id != id)
                     return NotFound();
-                else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == id.ToString())
+                else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == oldRecipe.CreatorId)
+                {
                     Recipes.Update(newRecipe, oldRecipe);
-
-                return new NoContentResult();
+                    return new NoContentResult();
+                }
+                else return Unauthorized();
             }
-            return BadRequest(new { errors = ModelState.Values.Select(w => w.Errors.Select(p => p.ErrorMessage))});
+            else return BadRequest(new { errors = ModelState.Values.Select(w => w.Errors.Select(p => p.ErrorMessage))});
         }
 
         [HttpDelete("{id}"), Authorize]
