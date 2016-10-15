@@ -25,7 +25,7 @@ namespace Project.Models
 
         public int Created { get; set; }
         public string CommenterId { get; set; }
-        public int RecipeId { get; set; }
+        public int? RecipeId { get; set; }
 
         public virtual AccountIdentity AccountIdentity { get; set; }
         public virtual Recipe Recipe { get; set; }

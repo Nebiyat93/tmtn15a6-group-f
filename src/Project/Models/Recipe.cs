@@ -11,7 +11,6 @@ namespace Project.Models
 {
     public class Recipe
     {
-        private Direction h = new Direction();
         public Recipe()
         {
             Directions = new List<Direction>();

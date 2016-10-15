@@ -18,10 +18,8 @@ namespace Project.Models
         [Required(ErrorMessage = "DirectionDescriptionMissing")]
         [StringLength(120, MinimumLength = 5, ErrorMessage = "DirectionDescriptionWrongLength")]
         public string Description { get; set; }
-
-        [ForeignKey("Id")]
-        public int RecipeId { get; set; }
-        public Recipe Recipe { get; set; } 
+        public int? RecipeId { get; set; }
+        public virtual Recipe Recipe { get; set; } 
 
     }
 
