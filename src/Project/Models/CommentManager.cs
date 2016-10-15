@@ -16,10 +16,10 @@ namespace Project.Models
             this._context = db;
         }
 
-        public IEnumerable<Comment> GetAll()
-        {
-            return _context.Comments;
-        }
+        //public IEnumerable<Comment> GetAll()
+        //{
+        //    return _context.Comments;
+        //}
 
         public void Add(Comment comm, string commenterId)
         {

@@ -35,14 +35,15 @@ namespace Project.Controllers
             var item = Recipes.Find(Id);
             if (item == null)
                 return NotFound();
-            var creator = new List<string> { item.CreatorId, item.AccountIdentity.UserName };
-            return Ok(new { item.Id, item.Name, item.Description,creator, item.Image, item.Created, item.Directions });
+            var creator = new { item.AccountIdentity.Id, item.AccountIdentity.UserName };
+            var directions = item.Directions.Select(w => new { w.Order, w.Description });
+            return Ok(new { item.Id, item.Name, item.Description, creator, item.Image, item.Created, directions});
         }
 
         [HttpGet]
         public IActionResult GetNewest([FromQuery]int page)
         {
-            var item = Recipes.GetAllSorted().Skip(2 * (page - 1)).Take(2).ToList();
+            var item = Recipes.GetAllSorted().Skip(10 * (page - 1)).Take(10).ToList();
             if (page == 0 || item.Count == 0)
                 return NotFound();
             return Ok(item.Select(w => new { w.Id, w.Name, w.Created }));
@@ -54,8 +55,8 @@ namespace Project.Controllers
             var item = Recipes.Find(Id);
             if (item == null)
                 return NotFound();
-            var commenter = new List<string> { item.CreatorId, item.AccountIdentity.UserName };
-            var p = item.Comments.Select(w => new { w.Text, w.Grade, commenter, w.Id });
+            var commenter = new { item.AccountIdentity.Id, item.AccountIdentity.UserName };
+            var p = item.Comments.Select(w => new { w.Text, w.Grade, commenter, w.Id, w.Created });
             return Ok(p);
         }
 

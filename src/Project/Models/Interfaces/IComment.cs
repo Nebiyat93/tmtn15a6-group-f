@@ -8,6 +8,6 @@ namespace Project.Models.Interfaces
         void Remove(int Id);
         void Update(Comment comm);
         void Add(Comment comm, string commenterId);
-        IEnumerable<Comment> GetAll();
+        //sIEnumerable<Comment> GetAll();
     }
 }
