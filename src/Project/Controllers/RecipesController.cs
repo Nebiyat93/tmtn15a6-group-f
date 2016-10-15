@@ -42,7 +42,7 @@ namespace Project.Controllers
         [HttpGet]
         public IActionResult GetNewest([FromQuery]int page)
         {
-            var item = Recipes.GetAllSorted().Skip(2 * (page - 1)).Take(2).ToList();
+            var item = Recipes.GetAllSorted().Skip(10 * (page - 1)).Take(10).ToList();
             if (page == 0 || item.Count == 0)
                 return NotFound();
             return Ok(item.Select(w => new { w.Id, w.Name, w.Created }));
@@ -55,7 +55,7 @@ namespace Project.Controllers
             if (item == null)
                 return NotFound();
             var commenter = new List<string> { item.CreatorId, item.AccountIdentity.UserName };
-            var p = item.Comments.Select(w => new { w.Text, w.Grade, commenter, w.Id });
+            var p = item.Comments.Select(w => new { w.Text, w.Grade, commenter, w.Id, w.Created });
             return Ok(p);
         }
 

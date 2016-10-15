@@ -17,10 +17,10 @@ namespace Project.Models
 
         }
 
-        public IEnumerable<Comment> GetAll()
-        {
-            return _context.Comments;
-        }
+        //public IEnumerable<Comment> GetAll()
+        //{
+        //    return _context.Comments;
+        //}
 
         public void Add(Comment comm, string commenterId)
         {
@@ -31,7 +31,7 @@ namespace Project.Models
                 if (id < 0)
                     id *= -1;
                 comm.Id = id;
-                comm.Created = RecipeManager.generateUnixTimestamp();
+                comm.Created = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
             } while (_context.Comments.Any(h => h.Id == id)); //Loops as long as the existing row's id is the same as the newly generated one
 
             var user = _context.Users.First(p => p.Id == commenterId);

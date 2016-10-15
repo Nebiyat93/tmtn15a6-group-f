@@ -16,12 +16,6 @@ namespace Project.Controllers
         }
         public IDirection Directions { get; set; }
 
-        [HttpGet]
-        public IEnumerable<Direction> GetAll()
-        {
-            return Directions.GetAll();
-        }
-
         [HttpGet("{id}", Name = "GetDir")]
         public IActionResult GetById(int Id)
         {

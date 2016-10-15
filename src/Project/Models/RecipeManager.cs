@@ -39,7 +39,7 @@ namespace Project.Models
                     id *= -1;
                 recep.Id = id;
                 recep.CreatorId = userId;
-                recep.Created = generateUnixTimestamp();
+                recep.Created = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
             } while (_context.Recipes.Any(h => h.Id == id)); //Loops as long as the existing row's id is the same as the newly generated one
             _context.Recipes.Add(recep);
 
@@ -69,7 +69,7 @@ namespace Project.Models
                 oldRecipe.Name = newRecipe.Name;
             if (!string.IsNullOrWhiteSpace(newRecipe.Description))
                 oldRecipe.Description = newRecipe.Description;
-            oldRecipe.Created = generateUnixTimestamp();
+            oldRecipe.Created = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
 
             _context.SaveChanges();
         }
@@ -79,9 +79,5 @@ namespace Project.Models
         /// Gives number of seconds between current time and 1970/01/01
         /// </summary>
         /// <returns></returns>
-        public static Int32 generateUnixTimestamp()
-        {
-            return (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-        }
     }
 }
