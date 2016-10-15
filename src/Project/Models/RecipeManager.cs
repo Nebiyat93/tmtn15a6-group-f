@@ -12,7 +12,7 @@ namespace Project.Models
 {
     public class RecipeManager : IRecipe
     {
-        private MyDbContext _context;
+        private readonly MyDbContext _context;
 
         public RecipeManager(MyDbContext context)
         {
@@ -38,16 +38,12 @@ namespace Project.Models
                 if (id < 0)
                     id *= -1;
                 recep.Id = id;
-                recep.CreatorId = userId;
-                recep.Created = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
             } while (_context.Recipes.Any(h => h.Id == id)); //Loops as long as the existing row's id is the same as the newly generated one
+            recep.CreatorId = userId;
+            recep.Created = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+            recep.Directions.OrderBy(w => w.Order).ToList();
             _context.Recipes.Add(recep);
 
-
-            ///No logic for account existance yet!!!!
-            //var user = _context.Users.First(p => p.Id == recep.CreatorId);
-            //user.Recipes.Add(recep);
-            //_context.Users.Update(user);
             _context.SaveChanges();
         }
 
@@ -73,11 +69,5 @@ namespace Project.Models
 
             _context.SaveChanges();
         }
-
-
-        /// <summary>
-        /// Gives number of seconds between current time and 1970/01/01
-        /// </summary>
-        /// <returns></returns>
     }
 }

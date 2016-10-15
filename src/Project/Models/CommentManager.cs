@@ -10,11 +10,10 @@ namespace Project.Models
     public class CommentManager : IComment
     {
 
-        private MyDbContext _context;
+        private readonly MyDbContext _context;
         public CommentManager(MyDbContext db)
         {
             this._context = db;
-
         }
 
         //public IEnumerable<Comment> GetAll()
