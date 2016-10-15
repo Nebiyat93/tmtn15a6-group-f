@@ -33,8 +33,9 @@ namespace Project.Controllers
             var item = Recipes.Find(Id);
             if (item == null)
                 return NotFound();
-            var creator = new List<string> { item.CreatorId, item.AccountIdentity.UserName };
-            return Ok(new { item.Id, item.Name, item.Description,creator, item.Image, item.Created, item.Directions });
+            var creator = new { item.AccountIdentity.Id, item.AccountIdentity.UserName };
+            var directions = item.Directions.Select(w => new { w.Order, w.Description });
+            return Ok(new { item.Id, item.Name, item.Description, creator, item.Image, item.Created, directions});
         }
 
         [HttpGet]
@@ -52,7 +53,7 @@ namespace Project.Controllers
             var item = Recipes.Find(Id);
             if (item == null)
                 return NotFound();
-            var commenter = new List<string> { item.CreatorId, item.AccountIdentity.UserName };
+            var commenter = new { item.AccountIdentity.Id, item.AccountIdentity.UserName };
             var p = item.Comments.Select(w => new { w.Text, w.Grade, commenter, w.Id, w.Created });
             return Ok(p);
         }
