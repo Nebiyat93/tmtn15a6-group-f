@@ -107,15 +107,14 @@ namespace Project.Controllers
         [HttpPost("{id}/comments")]
         public IActionResult CreateComment(int id, [FromBody] Comment comm)
         {
-            if (comm == null)
-                return BadRequest();
-
-            // Create a comment --> implementation missing
-            comm.RecipeId = id;
-            var userId = this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value;
-            CommManager.Add(comm, userId);
-
-            return CreatedAtRoute("GetComm", new { comm.Text, comm.Grade, comm.CommenterId });
+            if (ModelState.IsValid)
+            {
+                comm.RecipeId = id;
+                var userId = this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value;
+                CommManager.Add(comm, userId);
+                return CreatedAtRoute("GetComm", new { comm.Text, comm.Grade, comm.CommenterId });
+            }
+            else return BadRequest();
         }
 
         [HttpPatch("{id}"), Authorize] //NOT FINISHED, not able to update direction!
@@ -127,9 +126,11 @@ namespace Project.Controllers
                 if (newRecipe == null || oldRecipe == null || oldRecipe.Id != id)
                     return NotFound();
                 else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == id.ToString())
+                {
                     Recipes.Update(newRecipe, oldRecipe);
-                    
-                return new NoContentResult();
+                    return new NoContentResult();
+                }
+                else return Unauthorized();
             }
             return BadRequest(new { errors = ModelState.Values.Select(w => w.Errors.Select(p => p.ErrorMessage))});
         }
