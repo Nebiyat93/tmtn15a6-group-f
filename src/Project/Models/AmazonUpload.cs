@@ -14,14 +14,14 @@ namespace Project.Models
             private string _hostName = "https://s3-website.eu-central-1.amazonaws.com";
         private string folderName = "Images/";
         /// <summary>
-        /// FIXA CREDENTIALS SEN KOMMER DET FUNKA.
+        /// FIXA CREDENTIALS.
         /// </summary>
-        private string awsAccessKeyId;
-        private string awsSecretAccessKey;
+        private string awsAccessKeyId = "AKIAJDHFS6STYYJX5AAA";
+        private string awsSecretAccessKey = "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";
 
         public AmazonUpload() 
             {
-                _client = new AmazonS3Client(awsAccessKeyId = "AKIAJDHFS6STYYJX5AAA", awsSecretAccessKey= "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", Amazon.RegionEndpoint.EUCentral1);
+                _client = new AmazonS3Client(awsAccessKeyId, awsSecretAccessKey, Amazon.RegionEndpoint.EUCentral1);
             }
 
             protected override async Task<Uri> streamUpload(string name, IFormFile file)

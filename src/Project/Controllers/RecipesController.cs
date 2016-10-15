@@ -91,7 +91,7 @@ namespace Project.Controllers
             if (uri == null) {
                 return NotFound();
             }
-            else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value?? ) // check user? 
+            else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == item.CreatorId ) // CHECK THIS!!! Doenst work. upload works even if ur not signed in.
             {
                 item.Image = uri.AbsoluteUri;
                 Update(id, item); // Update the recipe. 
