@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Project.Models.Interfaces;
 using Project.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,10 +16,11 @@ namespace Project.Controllers
     public class RecipesController : Controller
     {
         private IComment CommManager;
-
-        public RecipesController(IComment commentManager, IRecipe recep){
+        public IUpload imageHelp { get; set; }
+        public RecipesController(IComment commentManager, IRecipe recep, IUpload imageHelp ){
             Recipes = recep;
             this.CommManager = commentManager;
+            this.imageHelp = imageHelp;
         }
         public IRecipe Recipes { get; set; }
 
@@ -79,18 +81,26 @@ namespace Project.Controllers
         }
 
         // for Image!!
-        [HttpPut("{id}/image")]
-        public IActionResult UpdloadImage(int id, [FromBody] Recipe newRecipe)
+        [HttpPut("{id}/image"),Authorize]
+        public IActionResult UpdloadImage(int id, IFormFile image)
         {
-            var oldRecipe = Recipes.Find(id);
-            if (newRecipe == null || oldRecipe.Id != id)
+            var uri = imageHelp.Upload(image);
+            var item = Recipes.Find(id);
+            
+            if (uri == null) {
                 return NotFound();
+            }
+            else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value?? ) // check user? 
+            {
+                item.Image = uri.AbsoluteUri;
+                Update(id, item); // Update the recipe. 
+                return NoContent();
+            }
+            else
+            {
+                return Unauthorized();
+            }
 
-            else if (oldRecipe == null)
-                return NotFound();
-
-            Recipes.Update(newRecipe, oldRecipe);
-            return new NoContentResult();
         }
 
         [HttpPost("{id}/comments")]
@@ -117,7 +127,7 @@ namespace Project.Controllers
                     return NotFound();
                 else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == id.ToString())
                     Recipes.Update(newRecipe, oldRecipe);
-
+                    
                 return new NoContentResult();
             }
             return BadRequest(new { errors = ModelState.Values.Select(w => w.Errors.Select(p => p.ErrorMessage))});

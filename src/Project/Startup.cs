@@ -59,7 +59,7 @@ namespace Project
             services.AddSingleton<IComment, CommentManager>();
             services.AddSingleton<IRecipe, RecipeManager>();
             services.AddSingleton<IDirection, DirectionManager>();
-
+            services.AddSingleton<IUpload, AmazonUpload>();
 
 
         }

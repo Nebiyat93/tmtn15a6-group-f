@@ -66,7 +66,9 @@ namespace Project.Models
             if (!string.IsNullOrWhiteSpace(newRecipe.Description))
                 oldRecipe.Description = newRecipe.Description;
             oldRecipe.Created = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-
+            if (!string.IsNullOrWhiteSpace(newRecipe.Image))
+                oldRecipe.Image = newRecipe.Image;
+            _context.Update(oldRecipe);
             _context.SaveChanges();
         }
     }
