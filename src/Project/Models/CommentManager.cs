@@ -10,11 +10,10 @@ namespace Project.Models
     public class CommentManager : IComment
     {
 
-        private MyDbContext _context;
+        private readonly MyDbContext _context;
         public CommentManager(MyDbContext db)
         {
             this._context = db;
-
         }
 
         public IEnumerable<Comment> GetAll()
@@ -31,7 +30,7 @@ namespace Project.Models
                 if (id < 0)
                     id *= -1;
                 comm.Id = id;
-                comm.Created = RecipeManager.generateUnixTimestamp();
+                comm.Created = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
             } while (_context.Comments.Any(h => h.Id == id)); //Loops as long as the existing row's id is the same as the newly generated one
 
             var user = _context.Users.First(p => p.Id == commenterId);

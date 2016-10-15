@@ -49,7 +49,7 @@ namespace Project.JWT
                 var claims = new Claim[]
                 {
         new Claim("userId", user.Id),
-        new Claim("timeStamp", RecipeManager.generateUnixTimestamp().ToString(), ClaimValueTypes.Integer64)
+        new Claim("timeStamp", DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds.ToString(), ClaimValueTypes.Integer64)
                 };
 
                 // Create the JWT and write it to a string

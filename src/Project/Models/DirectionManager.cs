@@ -14,7 +14,12 @@ namespace Project.Models
     public class DirectionManager : IDirection
     {
 
-        private MyDbContext _context = new MyDbContext();
+        private readonly MyDbContext _context;
+
+        public DirectionManager(MyDbContext context)
+        {
+            _context = context;
+        }
 
         public IEnumerable<Direction> GetAll()
         {

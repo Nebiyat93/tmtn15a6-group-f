@@ -14,8 +14,6 @@ namespace Project.Controllers
     [Route("api/v1/[controller]")]
     public class RecipesController : Controller
     {
-        
-
         private IComment CommManager;
 
         public RecipesController(IComment commentManager, IRecipe recep){
