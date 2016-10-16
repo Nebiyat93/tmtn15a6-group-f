@@ -108,17 +108,18 @@ namespace Project.Controllers
 
         }
 
-        [HttpPost("{id}/comments")]
+        [HttpPost("{id}/comments"), Authorize] //Auth can't be tested on frontend
         public IActionResult CreateComment(int id, [FromBody] Comment comm)
         {
             if (ModelState.IsValid)
             {
-                comm.RecipeId = id;
                 var userId = this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value;
-                CommManager.Add(comm, userId);
-                return CreatedAtRoute("GetComm", new { comm.Text, comm.Grade, comm.CommenterId });
+                comm.RecipeId = id;
+                if (CommManager.Add(comm, userId))
+                    return CreatedAtRoute("GetComm", new { comm.Text, comm.Grade, comm.CommenterId });
+                else return Unauthorized();
             }
-            else return BadRequest();
+            return BadRequest(new { errors = ModelState.Values.Select(w => w.Errors.Select(p => p.ErrorMessage)) });
         }
 
         [HttpPatch("{id}"), Authorize]
