@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Project.CustomValidator;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Project.Models
@@ -23,6 +22,7 @@ namespace Project.Models
         [Required(ErrorMessage = "NameMissing")]
         [StringLength(70, MinimumLength = 5, ErrorMessage = "NameWrongLength")]
         public string Name { get; set; }
+
         
         [Required(ErrorMessage = "MissingDescription")]
         [StringLength(300, MinimumLength = 10, ErrorMessage = "DescriptionWrongLength")]
@@ -34,8 +34,8 @@ namespace Project.Models
 
         public string CreatorId {get;set;}
 
-        public ICollection<Comment> Comments { get; set; } 
-        [MinLength(1, ErrorMessage = "DirectionsMissing")]
+        public ICollection<Comment> Comments { get; set; }
+        [Required(ErrorMessage = "DirectionsMissing")]
         public ICollection<Direction> Directions { get; set; } 
         public ICollection<Favorites> Favorites { get; set; }
 

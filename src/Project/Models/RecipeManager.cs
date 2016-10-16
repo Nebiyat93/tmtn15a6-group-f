@@ -12,7 +12,7 @@ namespace Project.Models
 {
     public class RecipeManager : IRecipe
     {
-        private MyDbContext _context;
+        private readonly MyDbContext _context;
 
         public RecipeManager(MyDbContext context)
         {
@@ -61,15 +61,20 @@ namespace Project.Models
 
         public void Update(Recipe newRecipe, Recipe oldRecipe)
         {
+
             if (!string.IsNullOrWhiteSpace(newRecipe.Name))
                 oldRecipe.Name = newRecipe.Name;
             if (!string.IsNullOrWhiteSpace(newRecipe.Description))
                 oldRecipe.Description = newRecipe.Description;
-            oldRecipe.Created = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+            if (newRecipe.Directions != null)
+                oldRecipe.Directions = newRecipe.Directions.OrderBy(w => w.Id).ToList();
+
             if (!string.IsNullOrWhiteSpace(newRecipe.Image))
                 oldRecipe.Image = newRecipe.Image;
 
-            _context.Update(oldRecipe);
+            oldRecipe.Created = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+
+            _context.Recipes.Update(oldRecipe);
             _context.SaveChanges();
         }
     }

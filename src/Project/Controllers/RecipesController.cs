@@ -7,6 +7,9 @@ using Project.Models.Interfaces;
 using Project.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
+using Newtonsoft.Json.Linq;
+using System.Diagnostics;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -95,7 +98,7 @@ namespace Project.Controllers
             else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == item.CreatorId ) // CHECK THIS!!! Doenst work. upload works even if ur not signed in.
             {
                 item.Image = uri.AbsoluteUri;
-                Update(id, item); // Update the recipe. 
+                //Update(id, item); // Update the recipe. 
                 return NoContent();
             }
             else
@@ -118,11 +121,22 @@ namespace Project.Controllers
             else return BadRequest();
         }
 
-        [HttpPatch("{id}"), Authorize] //NOT FINISHED, not able to update direction!
+        [HttpPatch("{id}"), Authorize]
         public IActionResult Update(int id, [FromBody] Recipe newRecipe)
         {
-            //ModelState.Remove("Name");
-            //ModelState.Remove("Description");
+            if (string.IsNullOrWhiteSpace(newRecipe.Name))
+                ModelState.Remove("Name");
+            if (string.IsNullOrWhiteSpace(newRecipe.Description))
+                ModelState.Remove("Description");
+            if (newRecipe.Directions == null || newRecipe.Directions.Count == 0)
+                ModelState.Remove("Directions");
+            else
+            {
+                if (string.IsNullOrWhiteSpace(newRecipe.Directions.Select(w => w.Order).ToString()))
+                    ModelState.Remove("Order");
+                if (string.IsNullOrWhiteSpace(newRecipe.Directions.Select(w => w.Description).ToString()))
+                    ModelState.Remove("Description");
+            }
 
             if (ModelState.IsValid)
             {
@@ -134,7 +148,9 @@ namespace Project.Controllers
                     Recipes.Update(newRecipe, oldRecipe);
                     return new NoContentResult();
                 }
-                else return Unauthorized();
+                else
+                    return Unauthorized();
+                
             }
             return BadRequest(new { errors = ModelState.Values.Select(w => w.Errors.Select(p => p.ErrorMessage))});
         }
