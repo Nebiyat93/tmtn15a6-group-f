@@ -67,8 +67,12 @@ namespace Project.Models
         public void Update(Comment comm)
         {
             var _comm = Find(comm.Id);
-            _comm.Text = comm.Text;
-            _comm.Grade = comm.Grade;
+
+            if (!string.IsNullOrWhiteSpace(comm.Text))
+                _comm.Text = comm.Text;
+            if (comm.Grade != 0)
+                _comm.Grade = comm.Grade;
+            _context.Comments.Update(_comm);
             _context.SaveChanges();
         }
     }

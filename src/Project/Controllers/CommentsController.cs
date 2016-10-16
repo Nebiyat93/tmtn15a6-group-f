@@ -32,38 +32,28 @@ namespace Project.Controllers
         [HttpPatch("{id}"), Authorize]
         public IActionResult Update(int id, [FromBody] Comment comm)
         {
-            bool check = true;
-            List<string> err = new List<string>();
-            comm.Id = id;
-            var p = Comments.Find(id);
+            if (string.IsNullOrWhiteSpace(comm.Text))
+                ModelState.Remove("Text");
+            if (comm.Grade == 0)
+                ModelState.Remove("Grade");
 
-            if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == p.CommenterId)
+            if (ModelState.IsValid)
             {
+                comm.Id = id;
+                var p = Comments.Find(id);
                 if (p == null)
-                {
                     return NotFound();
-                }
-                if (comm.Text.Length < 10 || comm.Text.Length > 400)
-                {
-                    err.Add("TextWrongLength");
-                    check = false;
-                }
-                if (comm.Grade < 1 || comm.Grade > 5)
-                {
-                    err.Add("GradeWrongValue");
-                    check = false;
-                }
-                if (check)
+                else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == p.CommenterId)
                 {
                     Comments.Update(comm);
                     return new NoContentResult();
                 }
                 else
-                    return BadRequest(new { error = err });
-
+                    return Unauthorized();
             }
-            else
-                return Unauthorized();
+            return BadRequest(new { errors = ModelState.Values.Select(w => w.Errors.Select(p => p.ErrorMessage)) });
+
+
 
 
         }
