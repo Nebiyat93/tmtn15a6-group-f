@@ -32,6 +32,7 @@ namespace Project.Models
         public string Image { get; set; }
         public int Created { get; set; }
 
+        [ForeignKey("AccountIdentity")]
         public string CreatorId {get;set;}
 
         public ICollection<Comment> Comments { get; set; }

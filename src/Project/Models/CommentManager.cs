@@ -33,10 +33,10 @@ namespace Project.Models
                     if (id < 0)
                         id *= -1;
                     comm.Id = id;
-                    comm.Created = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
                 } while (_context.Comments.Any(h => h.Id == id)); //Loops as long as the existing row's id is the same as the newly generated one
 
-
+                comm.Created = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+                comm.AccountIdentity = user;
                 user.Comments.Add(comm);
                 _context.Users.Update(user);
                 _context.Comments.Add(comm);

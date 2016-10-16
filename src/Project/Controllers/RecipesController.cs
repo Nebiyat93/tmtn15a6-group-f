@@ -115,6 +115,13 @@ namespace Project.Controllers
             {
                 var userId = this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value;
                 comm.RecipeId = id;
+
+                if (Recipes.Find(id).Comments.Select(w => w.Recipe.CreatorId == userId).FirstOrDefault())
+                {
+                    ModelState.AddModelError("Commented", "CommenterAlreadyComment");
+                    return BadRequest(new { errors = ModelState["Commented"].Errors.Select(w => w.ErrorMessage)});
+                }
+
                 if (CommManager.Add(comm, userId))
                     return CreatedAtRoute("GetComm", new { comm.Text, comm.Grade, comm.CommenterId });
                 else return Unauthorized();

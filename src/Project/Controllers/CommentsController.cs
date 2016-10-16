@@ -13,11 +13,12 @@ namespace Project.Controllers
     [Route("api/v1/[controller]")]
     public class CommentsController : Controller
     {
+        public IComment Comments { get; set; }
         public CommentsController(IComment comm)
         {
             Comments = comm;
         }
-        public IComment Comments { get; set; }
+        
 
         [HttpGet("{id}", Name = "GetComm")]
         public IActionResult GetById(int Id)
@@ -52,10 +53,6 @@ namespace Project.Controllers
                     return Unauthorized();
             }
             return BadRequest(new { errors = ModelState.Values.Select(w => w.Errors.Select(p => p.ErrorMessage)) });
-
-
-
-
         }
 
         [HttpDelete("{id}")]

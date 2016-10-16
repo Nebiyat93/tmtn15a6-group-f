@@ -31,6 +31,7 @@ namespace Project.Models
 
         public void Add(Recipe recep, string userId)
         {
+            var user = _context.Users.First(p => p.Id == userId);
             int id;
             do
             {
@@ -41,6 +42,7 @@ namespace Project.Models
             } while (_context.Recipes.Any(h => h.Id == id)); //Loops as long as the existing row's id is the same as the newly generated one
             recep.CreatorId = userId;
             recep.Created = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+            recep.AccountIdentity = user;
             recep.Directions.OrderBy(w => w.Order).ToList();
             _context.Recipes.Add(recep);
 

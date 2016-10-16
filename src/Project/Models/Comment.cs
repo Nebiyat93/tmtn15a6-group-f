@@ -25,7 +25,11 @@ namespace Project.Models
         [StringLength(200, MinimumLength = 0)]
         public string Image { get; set; }
         public int Created { get; set; }
+
+        [ForeignKey("AccountIdentity")]
         public string CommenterId { get; set; }
+
+        [ForeignKey("Recipe")]
         public int? RecipeId { get; set; }
 
         public virtual AccountIdentity AccountIdentity { get; set; }
