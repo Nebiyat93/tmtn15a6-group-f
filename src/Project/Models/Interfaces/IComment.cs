@@ -7,7 +7,7 @@ namespace Project.Models.Interfaces
         Comment Find(int Id);
         void Remove(int Id);
         void Update(Comment comm);
-        void Add(Comment comm, string commenterId);
+        bool Add(Comment comm, string commenterId);
         //sIEnumerable<Comment> GetAll();
     }
 }
