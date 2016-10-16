@@ -95,7 +95,7 @@ namespace Project.Controllers
         [HttpPatch("{id}"), Authorize]
         public async Task<IActionResult> Update(string id, [FromBody] Account acc)
         {
-            var _acc = _userManager.Users.First(p => p.Id == id);
+            var _acc = _userManager.Users.FirstOrDefault(p => p.Id == id);
             if (_acc != null)
             {
                 if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == _acc.Id)
