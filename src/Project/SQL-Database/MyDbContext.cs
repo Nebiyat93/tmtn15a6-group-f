@@ -25,7 +25,7 @@ namespace Project.SQL_Database
             modelBuilder.Entity<AccountIdentity>().HasMany(pt => pt.Recipes).WithOne(r => r.AccountIdentity).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<AccountIdentity>().HasMany(pt => pt.Favorites).WithOne(pt => pt.AccountIdentity).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Recipe>().HasOne(pt => pt.AccountIdentity).WithMany(r => r.Recipes);
-            modelBuilder.Entity<Recipe>().HasMany(c => c.Comments).WithOne(r => r.Recipe);
+            modelBuilder.Entity<Recipe>().HasMany(c => c.Comments).WithOne(r => r.Recipe).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Recipe>().HasMany(d => d.Directions).WithOne(r => r.Recipe).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Comment>().HasOne(pt => pt.Recipe).WithMany(c => c.Comments);
             modelBuilder.Entity<Comment>().HasOne(pt => pt.AccountIdentity).WithMany(c => c.Comments);
