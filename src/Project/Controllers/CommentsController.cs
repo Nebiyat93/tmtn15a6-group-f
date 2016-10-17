@@ -58,16 +58,20 @@ namespace Project.Controllers
             return BadRequest(new { errors = ModelState.Values.Select(w => w.Errors.Select(p => p.ErrorMessage)) });
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize]
         public IActionResult Delete(int id)
         {
             var comm = Comments.Find(id);
             if (comm == null)
                 return NotFound();
-
-            Comments.Remove(id);
-            return new NoContentResult();
+            else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == comm.CommenterId)
+            {
+                Comments.Remove(id);
+                return new NoContentResult();
+            }
+            else return Unauthorized();
         }
+
         [HttpPut("{id}/image"), Authorize]
         public IActionResult UpdloadImage(int id, IFormFile image)
         {

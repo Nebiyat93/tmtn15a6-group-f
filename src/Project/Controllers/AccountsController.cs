@@ -126,7 +126,7 @@ namespace Project.Controllers
         [HttpDelete("{id}"), Authorize]
         public async Task<IActionResult> Delete(string id)
         {
-            var _acc = _userManager.Users.FirstOrDefault(p => p.Id == id);
+            var _acc = _userManager.Users.Include(p => p.Comments).FirstOrDefault(p => p.Id == id);
             if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == _acc.Id)
             {
                 var res = await _userManager.DeleteAsync(_acc);
