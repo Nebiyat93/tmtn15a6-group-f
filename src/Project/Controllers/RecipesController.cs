@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -21,7 +22,8 @@ namespace Project.Controllers
     {
         private IComment CommManager;
         public IUpload imageHelp { get; set; }
-        public RecipesController(IComment commentManager, IRecipe recep, IUpload imageHelp ){
+        public RecipesController(IComment commentManager, IRecipe recep, IUpload imageHelp)
+        {
             Recipes = recep;
             this.CommManager = commentManager;
             this.imageHelp = imageHelp;
@@ -61,8 +63,8 @@ namespace Project.Controllers
             if (item == null)
                 return NotFound();
             //commenter = new { w.CommenterId, w.AccountIdentity.UserName } // this code is what we should have when we get the comments to work.
-            var commenter = new { item.AccountIdentity.Id, item.AccountIdentity.UserName };
-            var p = item.Comments.Select(w => new { w.Id, w.Text, w.Grade, commenter ,w.Image, w.Created });
+            //var commenter = new { item.AccountIdentity.Id, item.AccountIdentity.UserName };
+            var p = item.Comments.Select(w => new { w.Id, w.Text, w.Grade, commenter = new { w.CommenterId, w.AccountIdentity.UserName }, w.Image, w.Created });
             return Ok(p);
         }
 
@@ -126,7 +128,7 @@ namespace Project.Controllers
                     return BadRequest(new { errors = ModelState["Commented"].Errors.Select(w => w.ErrorMessage)});
                 }
                 comm.CommenterId = userId;
-                
+
                 if (CommManager.Add(comm, userId))
                     return CreatedAtRoute("GetComm", new { comm.Text, comm.Grade, comm.CommenterId });
                 else return Unauthorized();

@@ -45,10 +45,10 @@ namespace Project.Models
             recep.AccountIdentity = user;
             recep.Directions.OrderBy(w => w.Order).ToList();
             _context.Recipes.Add(recep);
-            _context.SaveChanges();
-
+   
             user.Recipes.Add(recep);
             _context.Users.Update(user);
+            _context.SaveChanges();
         }
 
         public Recipe Find(int id)
