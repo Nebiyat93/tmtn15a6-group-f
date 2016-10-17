@@ -18,8 +18,8 @@ namespace Project.Models
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
 
-        public ICollection<Comment> Comments { get; set; }
-        public ICollection<Recipe> Recipes { get; set; }   
-        public ICollection<Favorites> Favorites { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Recipe> Recipes { get; set; }   
+        public virtual ICollection<Favorites> Favorites { get; set; }
     }
 }

@@ -45,8 +45,10 @@ namespace Project.Models
             recep.AccountIdentity = user;
             recep.Directions.OrderBy(w => w.Order).ToList();
             _context.Recipes.Add(recep);
-
             _context.SaveChanges();
+
+            user.Recipes.Add(recep);
+            _context.Users.Update(user);
         }
 
         public Recipe Find(int id)
@@ -56,10 +58,12 @@ namespace Project.Models
 
         public void Remove(int id)
         {
-            var recep = _context.Recipes.FirstOrDefault(h => h.Id == id);
-            _context.Recipes.Remove(recep);
+            
+            _context.Recipes.Remove(Find(id));
             _context.SaveChanges();
         }
+
+
 
         public void Update(Recipe newRecipe, Recipe oldRecipe)
         {

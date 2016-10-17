@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Project.Models.Interfaces;
 using Project.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Project.Controllers
@@ -14,11 +15,13 @@ namespace Project.Controllers
     public class CommentsController : Controller
     {
         public IComment Comments { get; set; }
-        public CommentsController(IComment comm)
+        public IUpload imageHelp { get; set; }
+        public CommentsController(IComment comm, IUpload imageHelp)
         {
             Comments = comm;
+            this.imageHelp = imageHelp;
         }
-        
+
 
         [HttpGet("{id}", Name = "GetComm")]
         public IActionResult GetById(int Id)
@@ -64,6 +67,27 @@ namespace Project.Controllers
 
             Comments.Remove(id);
             return new NoContentResult();
+        }
+        [HttpPut("{id}/image"), Authorize]
+        public IActionResult UpdloadImage(int id, IFormFile image)
+        {
+            var uri = imageHelp.Upload(image);
+            var item = Comments.Find(id);
+
+            if (uri == null)
+            {
+                return NotFound();
+            }
+            else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == item.CommenterId) // CHECK THIS!!! Doenst work. upload works even if ur not signed in.
+            {
+                item.Image = uri.AbsoluteUri;
+                Update(id, item); // Update the recipe. 
+                return NoContent();
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
     }
 }

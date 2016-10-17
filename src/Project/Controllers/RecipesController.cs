@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -56,10 +57,12 @@ namespace Project.Controllers
         public IActionResult GetCommentsById(int Id)
         {
             var item = Recipes.Find(Id);
+            var comm = item.Comments;
             if (item == null)
                 return NotFound();
+            //commenter = new { w.CommenterId, w.AccountIdentity.UserName } // this code is what we should have when we get the comments to work.
             var commenter = new { item.AccountIdentity.Id, item.AccountIdentity.UserName };
-            var p = item.Comments.Select(w => new { w.Text, w.Grade, commenter, w.Id, w.Created });
+            var p = item.Comments.Select(w => new { w.Id, w.Text, w.Grade, commenter ,w.Image, w.Created });
             return Ok(p);
         }
 
@@ -90,15 +93,15 @@ namespace Project.Controllers
         public IActionResult UpdloadImage(int id, IFormFile image)
         {
             var uri = imageHelp.Upload(image);
-            var item = Recipes.Find(id);
+            var recep = Recipes.Find(id);
             
             if (uri == null) {
                 return NotFound();
             }
-            else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == item.CreatorId ) // CHECK THIS!!! Doenst work. upload works even if ur not signed in.
+            else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == recep.CreatorId )
             {
-                item.Image = uri.AbsoluteUri;
-                //Update(id, item); // Update the recipe. 
+                recep.Image = uri.AbsoluteUri;
+                Update(id, recep); // Update the recipe. 
                 return NoContent();
             }
             else
@@ -111,17 +114,19 @@ namespace Project.Controllers
         [HttpPost("{id}/comments"), Authorize] //Auth can't be tested on frontend
         public IActionResult CreateComment(int id, [FromBody] Comment comm)
         {
+            
             if (ModelState.IsValid)
             {
                 var userId = this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value;
                 comm.RecipeId = id;
 
-                if (Recipes.Find(id).Comments.Select(w => w.Recipe.CreatorId == userId).FirstOrDefault())
+                if (Recipes.Find(id).Comments.Any(w=>w.CommenterId == userId))
                 {
                     ModelState.AddModelError("Commented", "CommenterAlreadyComment");
                     return BadRequest(new { errors = ModelState["Commented"].Errors.Select(w => w.ErrorMessage)});
                 }
-
+                comm.CommenterId = userId;
+                
                 if (CommManager.Add(comm, userId))
                     return CreatedAtRoute("GetComm", new { comm.Text, comm.Grade, comm.CommenterId });
                 else return Unauthorized();

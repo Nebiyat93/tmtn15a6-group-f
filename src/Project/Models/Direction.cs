@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
+
 namespace Project.Models
 {
     public class Direction
@@ -18,8 +20,9 @@ namespace Project.Models
         [Required(ErrorMessage = "DirectionDescriptionMissing")]
         [StringLength(120, MinimumLength = 5, ErrorMessage = "DirectionDescriptionWrongLength")]
         public string Description { get; set; }
-        [ForeignKey("Recipe")]
-        public int? RecipeId { get; set; }
+        
+        public int RecipeId { get; set; }
+        
         public virtual Recipe Recipe { get; set; } 
 
     }

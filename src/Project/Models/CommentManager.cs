@@ -39,13 +39,18 @@ namespace Project.Models
                 comm.AccountIdentity = user;
                 user.Comments.Add(comm);
                 _context.Users.Update(user);
-                _context.Comments.Add(comm);
-                _context.SaveChanges();
+
+                
 
                 var recep = _context.Recipes.First(r => r.Id == comm.RecipeId);
                 recep.Comments.Add(comm);
                 _context.Recipes.Update(recep);
+
+                comm.CommenterId = user.Id;
+                comm.AccountIdentity = user;
+                
                 _context.SaveChanges();
+
                 return true;
             }
             else return false;
@@ -70,10 +75,13 @@ namespace Project.Models
 
             if (!string.IsNullOrWhiteSpace(comm.Text))
                 _comm.Text = comm.Text;
+            if (!string.IsNullOrWhiteSpace(comm.Image))
+                _comm.Image = comm.Image;
             if (comm.Grade != 0)
                 _comm.Grade = comm.Grade;
             _context.Comments.Update(_comm);
             _context.SaveChanges();
         }
+
     }
 }

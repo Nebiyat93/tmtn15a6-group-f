@@ -12,8 +12,8 @@ namespace Project.Models
     {
         public Recipe()
         {
-            Directions = new List<Direction>();
-            Comments = new List<Comment>();
+            Directions = new HashSet<Direction>();
+            Comments = new HashSet<Comment>();
         }
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -32,14 +32,14 @@ namespace Project.Models
         public string Image { get; set; }
         public int Created { get; set; }
 
-        [ForeignKey("AccountIdentity")]
+        
         public string CreatorId {get;set;}
 
-        public ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
         [Required(ErrorMessage = "DirectionsMissing")]
-        public ICollection<Direction> Directions { get; set; } 
-        public ICollection<Favorites> Favorites { get; set; }
+        public virtual ICollection<Direction> Directions { get; set; } 
+        public virtual ICollection<Favorites> Favorites { get; set; }
 
-        public AccountIdentity AccountIdentity { get; set; } 
+        public virtual AccountIdentity AccountIdentity { get; set; } 
     }
 }

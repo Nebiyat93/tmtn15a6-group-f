@@ -11,7 +11,7 @@ namespace Project.Models
             
             static IAmazonS3 _client; 
             private string _bucketName = "mjecipesstorage";
-            private string _hostName = "https://s3-website.eu-central-1.amazonaws.com";
+            private string _hostName = "https://s3.eu-central-1.amazonaws.com";
         private string folderName = "Images/";
         /// <summary>
         /// FIXA CREDENTIALS.
@@ -28,12 +28,13 @@ namespace Project.Models
             {
                 var request = await _client.PutObjectAsync(new PutObjectRequest()
                 {
+                    
                     BucketName = _bucketName,
                     Key = folderName + name,
                     InputStream = file.OpenReadStream(),
                     ContentType = file.ContentType
                 });
-                return new Uri(_hostName + _bucketName + "/" + folderName + name);
+                return new Uri(_hostName + "/" + _bucketName + "/" + folderName + name);
             }
 
             protected override async Task<bool> streamRemove(string path)

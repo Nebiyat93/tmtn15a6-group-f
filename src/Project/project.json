@@ -21,7 +21,8 @@
     "Microsoft.AspNetCore.Identity": "1.0.0",
     "Microsoft.AspNetCore.Authentication.JwtBearer": "1.0.0",
     "AWSSDK.S3": "3.3.0.2",
-    "AWSSDK.Extensions.NETCore.Setup": "3.3.0.1"
+    "AWSSDK.Extensions.NETCore.Setup": "3.3.0.1",
+    "Microsoft.EntityFrameworkCore": "1.0.1"
   },
 
   "tools": {
