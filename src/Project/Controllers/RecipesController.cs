@@ -62,8 +62,6 @@ namespace Project.Controllers
             var comm = item.Comments;
             if (item == null)
                 return NotFound();
-            //commenter = new { w.CommenterId, w.AccountIdentity.UserName } // this code is what we should have when we get the comments to work.
-            //var commenter = new { item.AccountIdentity.Id, item.AccountIdentity.UserName };
             var p = item.Comments.Select(w => new { w.Id, w.Text, w.Grade, commenter = new { w.CommenterId, w.AccountIdentity.UserName }, w.Image, w.Created });
             return Ok(p);
         }
@@ -72,13 +70,11 @@ namespace Project.Controllers
         public IActionResult Search([FromQuery]string term)
         {
             var item = Recipes.GetAll().Where(w => w.Name.Contains(term) || w.Description.Contains(term));
-            //if ()
-            //    return NotFound();
             return Ok(item.Select(w => new { w.Id, w.Name, w.Created }));
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] Recipe recep) //Cannot add direction????
+        public IActionResult Create([FromBody] Recipe recep)
         {
             if (ModelState.IsValid)
             {
@@ -103,7 +99,7 @@ namespace Project.Controllers
             else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == recep.CreatorId )
             {
                 recep.Image = uri.AbsoluteUri;
-                Update(id, recep); // Update the recipe. 
+                Update(id, recep);
                 return NoContent();
             }
             else
@@ -113,7 +109,7 @@ namespace Project.Controllers
 
         }
 
-        [HttpPost("{id}/comments"), Authorize] //Auth can't be tested on frontend
+        [HttpPost("{id}/comments"), Authorize] 
         public IActionResult CreateComment(int id, [FromBody] Comment comm)
         {
             
