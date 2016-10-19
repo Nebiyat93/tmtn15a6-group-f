@@ -10,14 +10,14 @@ namespace Project.Models
     {
             
             static IAmazonS3 _client; 
-            private string _bucketName = "mjecipesstorage";
+            private string _bucketName = "heca-mjecipe";
             private string _hostName = "https://s3.eu-central-1.amazonaws.com";
-        private string folderName = "Images/";
+        private string folderName = "images/";
         /// <summary>
         /// FIXA CREDENTIALS.
         /// </summary>
-        private string awsAccessKeyId = "AKIAJDHFS6STYYJX5AAA";
-        private string awsSecretAccessKey = "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";
+        private string awsAccessKeyId = "AKIAIL7O74DPNHGOOSGQ";
+        private string awsSecretAccessKey = "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";
 
         public AmazonUpload() 
             {

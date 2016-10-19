@@ -13,7 +13,7 @@ namespace Project.SQL_Database
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string connString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=MjecipeDb;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+            string connString = "Data Source=heca166p-db.cifoslqxjcdu.eu-central-1.rds.amazonaws.com;Integrated Security=False;User ID=heca166p;Password=dbpw0815;Connect Timeout=15;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;Initial Catalog=heca166p-db";
             optionsBuilder.UseSqlServer(connString);
         }
 
