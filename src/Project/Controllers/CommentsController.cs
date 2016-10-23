@@ -82,10 +82,10 @@ namespace Project.Controllers
             {
                 return NotFound();
             }
-            else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == item.CommenterId) // CHECK THIS!!! Doenst work. upload works even if ur not signed in.
+            else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == item.CommenterId) 
             {
                 item.Image = uri.AbsoluteUri;
-                Update(id, item); // Update the recipe. 
+                Update(id, item); 
                 return NoContent();
             }
             else

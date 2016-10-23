@@ -9,6 +9,5 @@ namespace Project.Models.Interfaces
         void Remove(int Id);
         void Update(Comment comm);
         bool Add(Comment comm, string commenterId);
-        //sIEnumerable<Comment> GetAll();
     }
 }
