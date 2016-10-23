@@ -12,6 +12,8 @@ using System.Text;
 using System;
 using Project.JWT;
 using Microsoft.Extensions.Options;
+using Project.CustomValidation;
+using Project.Interfaces;
 
 namespace Project
 {
@@ -49,17 +51,15 @@ namespace Project
             services.Configure<IdentityOptions>(o => o.Cookies.ApplicationCookie.AutomaticChallenge = false);
 
             services.AddMvc();
-            //    .AddJsonOptions(options =>
-            //{
-            //    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-            //    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-            //});
 
             services.AddDbContext<MyDbContext>();
             services.AddSingleton<IComment, CommentManager>();
             services.AddSingleton<IRecipe, RecipeManager>();
             services.AddSingleton<IDirection, DirectionManager>();
             services.AddSingleton<IUpload, AmazonUpload>();
+            services.AddSingleton<IUser, UserService>();
+            services.AddSingleton<IValidateRecipe, ValidateRecipe>();
+            
 
 
         }

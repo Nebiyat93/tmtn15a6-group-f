@@ -12,6 +12,9 @@ using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
+using Project.Interfaces;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,16 +23,24 @@ namespace Project.Controllers
     [Route("api/v1/[controller]")]
     public class RecipesController : Controller
     {
-        private IComment CommManager;
-        public IUpload imageHelp { get; set; }
-        public RecipesController(IComment commentManager, IRecipe recep, IUpload imageHelp)
+        private IComment _commManager;
+        public IUpload _imageHelp { get; set; }
+        private IRecipe _recipes;
+        private IUser _userService;
+        private IValidateRecipe _validateRecipe;
+        public RecipesController(IComment commentManager, 
+            IRecipe recep, 
+            IUpload imageHelp, 
+            IUser userService, 
+            IValidateRecipe validateRecipe)
         {
-            Recipes = recep;
-            this.CommManager = commentManager;
-            this.imageHelp = imageHelp;
+            _recipes = recep;
+            _commManager = commentManager;
+            _imageHelp = imageHelp;
+            _userService = userService;
+            _validateRecipe = validateRecipe;
         }
-        public IRecipe Recipes { get; set; }
-
+        
         /// <summary>
         /// Returns recipe information
         /// </summary>
@@ -38,18 +49,18 @@ namespace Project.Controllers
         [HttpGet("{id}", Name = "GetRecep")]
         public IActionResult GetById(int Id)
         {
-            var item = Recipes.Find(Id);
+            var item = _recipes.Find(Id);
             if (item == null)
                 return NotFound();
             var creator = new { item.AccountIdentity.Id, item.AccountIdentity.UserName };
             var directions = item.Directions.Select(w => new { w.Order, w.Description });
-            return Ok(new { item.Id, item.Name, item.Description, creator, item.Image, item.Created, directions});
+            return Ok(new { item.Id, item.Name, item.Description, creator, item.Image, item.Created, directions });
         }
 
         [HttpGet]
         public IActionResult GetNewest([FromQuery]int page)
         {
-            var item = Recipes.GetAllSorted().Skip(10 * (page - 1)).Take(10).ToList();
+            var item = _recipes.GetAllSorted().Skip(10 * (page - 1)).Take(10).ToList();
             if (page == 0 || item.Count == 0)
                 return NotFound();
             return Ok(item.Select(w => new { w.Id, w.Name, w.Created }));
@@ -58,7 +69,7 @@ namespace Project.Controllers
         [HttpGet("{id}/comments")]
         public IActionResult GetCommentsById(int Id)
         {
-            var item = Recipes.Find(Id);
+            var item = _recipes.Find(Id);
             var comm = item.Comments;
             if (item == null)
                 return NotFound();
@@ -71,36 +82,45 @@ namespace Project.Controllers
         [HttpGet("search")]
         public IActionResult Search([FromQuery]string term)
         {
-            var item = Recipes.GetAll().Where(w => w.Name.Contains(term) || w.Description.Contains(term));
+            var item = _recipes.GetAll().Where(w => w.Name.Contains(term) || w.Description.Contains(term));
             //if ()
             //    return NotFound();
             return Ok(item.Select(w => new { w.Id, w.Name, w.Created }));
         }
 
-        [HttpPost]
-        public IActionResult Create([FromBody] Recipe recep) //Cannot add direction????
+        [HttpPost, Authorize]
+        public IActionResult Create([FromBody] Recipe recep)
         {
-            if (ModelState.IsValid)
+            if (recep == null)
+                return BadRequest();
+
+            var thisUser = this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value;
+            if (_userService.ValidateUser(thisUser))
             {
-                Recipes.Add(recep, this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value);
-                var direc = recep.Directions.Select(w => new { w.Order, w.Description });
-                return CreatedAtRoute("GetRecep", new { id = recep.Id }, new { recep.Name, recep.Description, recep.CreatorId, recep.Id, direc });
+                if (_validateRecipe.ValidateProperties(recep, this.ModelState, HttpContext.Request.Method))
+                {
+                    _recipes.Add(recep, _userService.getCurrentUser(thisUser));
+                    var direc = recep.Directions.Select(w => new { w.Order, w.Description });
+                    return CreatedAtRoute("GetRecep", new { id = recep.Id }, new { recep.Name, recep.Description, recep.CreatorId, recep.Id, direc });
+                }
+                return BadRequest(new { errors = ModelState.Values.SelectMany(w => w.Errors).Select(e => e.ErrorMessage)});
             }
-            else
-                return BadRequest(new { errors = ModelState.Values.Select(w => w.Errors.Select(p => p.ErrorMessage)) });
+            else return Unauthorized();
+                
         }
 
         // for Image!!
-        [HttpPut("{id}/image"),Authorize]
+        [HttpPut("{id}/image"), Authorize]
         public IActionResult UpdloadImage(int id, IFormFile image)
         {
-            var uri = imageHelp.Upload(image);
-            var recep = Recipes.Find(id);
-            
-            if (uri == null) {
+            var uri = _imageHelp.Upload(image);
+            var recep = _recipes.Find(id);
+
+            if (uri == null)
+            {
                 return NotFound();
             }
-            else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == recep.CreatorId )
+            else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == recep.CreatorId)
             {
                 recep.Image = uri.AbsoluteUri;
                 Update(id, recep); // Update the recipe. 
@@ -116,20 +136,20 @@ namespace Project.Controllers
         [HttpPost("{id}/comments"), Authorize] //Auth can't be tested on frontend
         public IActionResult CreateComment(int id, [FromBody] Comment comm)
         {
-            
+
             if (ModelState.IsValid)
             {
                 var userId = this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value;
                 comm.RecipeId = id;
 
-                if (Recipes.Find(id).Comments.Any(w=>w.CommenterId == userId))
+                if (_recipes.Find(id).Comments.Any(w => w.CommenterId == userId))
                 {
                     ModelState.AddModelError("Commented", "CommenterAlreadyComment");
-                    return BadRequest(new { errors = ModelState["Commented"].Errors.Select(w => w.ErrorMessage)});
+                    return BadRequest(new { errors = ModelState["Commented"].Errors.Select(w => w.ErrorMessage) });
                 }
                 comm.CommenterId = userId;
 
-                if (CommManager.Add(comm, userId))
+                if (_commManager.Add(comm, userId))
                     return CreatedAtRoute("GetComm", new { comm.Text, comm.Grade, comm.CommenterId });
                 else return Unauthorized();
             }
@@ -139,46 +159,35 @@ namespace Project.Controllers
         [HttpPatch("{id}"), Authorize]
         public IActionResult Update(int id, [FromBody] Recipe newRecipe)
         {
-            if (string.IsNullOrWhiteSpace(newRecipe.Name))
-                ModelState.Remove("Name");
-            if (string.IsNullOrWhiteSpace(newRecipe.Description))
-                ModelState.Remove("Description");
-            if (newRecipe.Directions == null || newRecipe.Directions.Count == 0)
-                ModelState.Remove("Directions");
-            else
-            {
-                if (string.IsNullOrWhiteSpace(newRecipe.Directions.Select(w => w.Order).ToString()))
-                    ModelState.Remove("Order");
-                if (string.IsNullOrWhiteSpace(newRecipe.Directions.Select(w => w.Description).ToString()))
-                    ModelState.Remove("Description");
-            }
+            if (newRecipe == null)
+                return BadRequest();
 
-            if (ModelState.IsValid)
+            var oldRecipe = _recipes.Find(id);
+            if (oldRecipe == null)
+                return NotFound();
+
+            if (_validateRecipe.ValidateProperties(newRecipe, this.ModelState, HttpContext.Request.Method))
             {
-                var oldRecipe = Recipes.Find(id);
-                if (newRecipe == null || oldRecipe == null || oldRecipe.Id != id)
-                    return NotFound();
-                else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == oldRecipe.CreatorId)
+                if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == oldRecipe.CreatorId)
                 {
-                    Recipes.Update(newRecipe, oldRecipe);
+                    _recipes.Update(newRecipe, oldRecipe);
                     return new NoContentResult();
                 }
                 else
                     return Unauthorized();
-                
             }
-            return BadRequest(new { errors = ModelState.Values.Select(w => w.Errors.Select(p => p.ErrorMessage))});
+            return BadRequest(new { errors = ModelState.Values.SelectMany(w => w.Errors).Select(e => e.ErrorMessage) });
         }
 
         [HttpDelete("{id}"), Authorize]
         public IActionResult Delete(int id)
         {
-            var acc = Recipes.Find(id);
+            var acc = _recipes.Find(id);
             if (acc == null)
                 return NotFound();
             else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == acc.CreatorId)
             {
-                Recipes.Remove(id);
+                _recipes.Remove(id);
                 return new NoContentResult();
             }
             else return Unauthorized();

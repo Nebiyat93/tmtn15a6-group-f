@@ -14,18 +14,14 @@ namespace Project.Models
         [Key]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "DirectionOrderMissing")]
+        //[Range(1.0, double.MaxValue, ErrorMessage = "OrderMissing")]
         public int Order { get; set; }
 
-        [Required(ErrorMessage = "DirectionDescriptionMissing")]
-        [StringLength(120, MinimumLength = 5, ErrorMessage = "DirectionDescriptionWrongLength")]
+        //[Required(ErrorMessage = "DescriptionMissing", AllowEmptyStrings = false)]
+        //[StringLength(120, MinimumLength = 5, ErrorMessage = "DescriptionWrongLength")]
         public string Description { get; set; }
         
         public int RecipeId { get; set; }
-        
         public virtual Recipe Recipe { get; set; } 
-
     }
-
-
 }

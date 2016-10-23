@@ -45,17 +45,10 @@ namespace Project.Models
                 comm.AccountIdentity = user;
 
                 _context.Comments.Add(comm);
-
                 recep.Comments.Add(comm);
                 user.Comments.Add(comm);
-
-
                 _context.Users.Update(user);
                 _context.Recipes.Update(recep);
-
-
-
-
                 _context.SaveChanges();
 
 

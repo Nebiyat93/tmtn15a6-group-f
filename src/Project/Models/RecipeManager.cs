@@ -7,16 +7,20 @@ using System.Collections.Concurrent;
 using Project.Models;
 using Project.SQL_Database;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Project.CustomValidation;
 
 namespace Project.Models
 {
     public class RecipeManager : IRecipe
     {
         private readonly MyDbContext _context;
+        private DirectionManager _directionManager;
 
         public RecipeManager(MyDbContext context)
         {
             _context = context;
+            _directionManager = new DirectionManager(context);
         }
 
         public IEnumerable<Recipe> GetAll()
@@ -29,9 +33,8 @@ namespace Project.Models
             return _context.Recipes.Include(u => u.Comments).Include(d => d.Directions).OrderByDescending(r => r.Created);
         }
 
-        public void Add(Recipe recep, string userId)
+        public void Add(Recipe recep, AccountIdentity user)
         {
-            var user = _context.Users.First(p => p.Id == userId);
             int id;
             do
             {
@@ -40,7 +43,7 @@ namespace Project.Models
                     id *= -1;
                 recep.Id = id;
             } while (_context.Recipes.Any(h => h.Id == id)); //Loops as long as the existing row's id is the same as the newly generated one
-            recep.CreatorId = userId;
+            recep.CreatorId = user.Id;
             recep.Created = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
             recep.AccountIdentity = user;
             recep.Directions.OrderBy(w => w.Order).ToList();
@@ -63,17 +66,20 @@ namespace Project.Models
             _context.SaveChanges();
         }
 
-
-
         public void Update(Recipe newRecipe, Recipe oldRecipe)
         {
+            //if (!ValidateRecipe(newRecipe, null, false))
+            //    return;
 
             if (!string.IsNullOrWhiteSpace(newRecipe.Name))
                 oldRecipe.Name = newRecipe.Name;
             if (!string.IsNullOrWhiteSpace(newRecipe.Description))
                 oldRecipe.Description = newRecipe.Description;
-            if (newRecipe.Directions != null)
-                oldRecipe.Directions = newRecipe.Directions.OrderBy(w => w.Id).ToList();
+            if (newRecipe.Directions.Any(w => w.Order != 0))
+                oldRecipe.Directions.Where(w => w.Order != 0).ToList().ForEach(h => h.Order = newRecipe.Directions.Select(p => p.Order).FirstOrDefault());
+            if (!string.IsNullOrWhiteSpace(newRecipe.Directions.Select(w => w.Description).FirstOrDefault()))
+                oldRecipe.Directions.Where(w => !string.IsNullOrWhiteSpace(w.Description)).ToList().ForEach(h => h.Description = newRecipe.Directions.Select(p => p.Description).FirstOrDefault());
+            oldRecipe.Directions = newRecipe.Directions.OrderBy(w => w.Order).ToList();
 
             if (!string.IsNullOrWhiteSpace(newRecipe.Image))
                 oldRecipe.Image = newRecipe.Image;

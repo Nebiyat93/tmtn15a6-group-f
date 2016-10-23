@@ -14,15 +14,15 @@ namespace Project.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "TextMissing")]
-        [StringLength(200, MinimumLength = 0, ErrorMessage = "TextWrongLength")]
+        //[Required(ErrorMessage = "TextMissing")]
+        //[StringLength(200, MinimumLength = 0, ErrorMessage = "TextWrongLength")]
         public string Text { get; set; }
 
-        [Required(ErrorMessage = "GradeMissing")]
-        [Range(1, 5, ErrorMessage = "GradeWrongValue")]
+        //[Required(ErrorMessage = "GradeMissing")]
+        //[Range(1, 5, ErrorMessage = "GradeWrongValue")]
         public int Grade { get; set; }
 
-        [StringLength(200, MinimumLength = 0)]
+        //[StringLength(200, MinimumLength = 0)]
         public string Image { get; set; }
         public int Created { get; set; }
         public string CommenterId { get; set; }
