@@ -1,5 +1,8 @@
 # tmtn15a6-group-f
-Internet and cloud services. JTH. Van Carl, Nebiyat, Carina.
+Internet and cloud services. 
 
-Links to the backends: (coming soon)
+
+Nebiyat Sirak - sine1421
+
+Links to the backends: http://mjecipies-env.eu-central-1.elasticbeanstalk.com/api/v1
 
