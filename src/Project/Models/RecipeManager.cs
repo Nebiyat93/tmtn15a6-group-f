@@ -13,10 +13,11 @@ namespace Project.Models
     public class RecipeManager : IRecipe
     {
         private readonly MyDbContext _context;
-
-        public RecipeManager(MyDbContext context)
+        public IUpload imageHelp { get; set; }
+        public RecipeManager(MyDbContext context, IUpload imageHelp)
         {
             _context = context;
+            this.imageHelp = imageHelp;
         }
 
         public IEnumerable<Recipe> GetAll()
@@ -58,8 +59,20 @@ namespace Project.Models
 
         public void Remove(int id)
         {
-            
-            _context.Recipes.Remove(Find(id));
+            var parent = Find(id);
+            foreach(var comm in parent.Comments)
+            {
+                if (comm.Image != null)
+                {
+                    var im = new Uri(comm.Image);
+                    var name = im.Segments[im.Segments.Length - 1];
+                    var test = imageHelp.Remove(name);
+                }
+
+                _context.Remove(comm);
+            }
+            //_context.Comments.RemoveRange(parent.Comments);
+            _context.Remove(parent);
             _context.SaveChanges();
         }
 

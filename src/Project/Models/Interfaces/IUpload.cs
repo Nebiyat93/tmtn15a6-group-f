@@ -5,6 +5,7 @@ namespace Project.Models.Interfaces
 {
     public interface IUpload
     {
-        Uri Upload(IFormFile file); 
+        Uri Upload(IFormFile file);
+        bool Remove(string path);
     }
 }

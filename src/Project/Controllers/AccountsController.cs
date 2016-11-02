@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using Project.SQL_Database;
+using Project.Models.Interfaces;
+using System;
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Project.Controllers
@@ -15,9 +18,11 @@ namespace Project.Controllers
     public class AccountsController : Controller
     {
         private readonly UserManager<AccountIdentity> _userManager;
-        public AccountsController(UserManager<AccountIdentity> userManager)
+        public IUpload imageHelp { get; set; }
+        public AccountsController(UserManager<AccountIdentity> userManager, IUpload imageHelp)
         {
             _userManager = userManager;
+            this.imageHelp = imageHelp;
         }
 
         /// <summary>
@@ -126,18 +131,59 @@ namespace Project.Controllers
         [HttpDelete("{id}"), Authorize]
         public async Task<IActionResult> Delete(string id)
         {
-            var _acc = _userManager.Users.Include(p => p.Comments).FirstOrDefault(p => p.Id == id);
+            var _acc = _userManager.Users.Include(r=>r.Recipes).Include(p => p.Comments).FirstOrDefault(p => p.Id == id);
             if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == _acc.Id)
             {
                 var res = await _userManager.DeleteAsync(_acc);
-                if (res.Succeeded)
+                removeOrphans(_acc);
+                if (res.Succeeded) 
                     return NoContent();
                 else return BadRequest(new { errors = res.Errors });
             }
             else
                 return Unauthorized();
         }
+
+        public void removeOrphans(AccountIdentity parent)
+        {
+            MyDbContext _context = new MyDbContext();
+
+
+            //var recep = _context.Recipes.Include(u => u.AccountIdentity).Include(u => u.Comments).Include(d => d.Directions).ToList().TakeWhile(p => p.CreatorId == parent.Id);
+            //_context.Comments.Where(p => p.AccountIdentity == null).ToList().ForEach(c => _context.Comments.Remove(c));
+            foreach(var comm in _context.Comments.Where(p => p.AccountIdentity == null).Include(r=>r.Recipe).Include(s=>s.AccountIdentity))
+            {
+                if (comm.Image != null)
+                {
+                    var im = new Uri(comm.Image);
+                    var name = im.Segments[im.Segments.Length - 1];
+                    var test = imageHelp.Remove(name);
+                }
+
+                _context.Remove(comm);
+            }
+            // Loop through the recieps with accountidentity == null.
+            foreach(var recep in _context.Recipes.Where(p => p.AccountIdentity == null).Include(c=>c.Comments).Include(s=>s.AccountIdentity))
+            {
+                if (recep.Image != null)
+                {
+                    var im = new Uri(recep.Image);
+                    var name = im.Segments[im.Segments.Length - 1];
+                    var test = imageHelp.Remove(name);
+                }
+                
+                _context.Remove(recep);
+            }
+            //_context.Recipes.Where(p => p.AccountIdentity == null).ToList().ForEach(r => _context.Recipes.Remove(r));
+           _context.SaveChanges();
+
+        }
+
     }
+
+
+
+
     public class Account
     {
         [Key]

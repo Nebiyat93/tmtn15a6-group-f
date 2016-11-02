@@ -19,13 +19,19 @@ namespace Project.Models
             if (file == null)
                 return null;
 
-            
-            var name = file.FileName;
+
+            long time = DateTime.Now.ToFileTimeUtc();
+            var name = time + "." + file.FileName;
 
             if (file.ContentType == "image/jpeg")
                 return streamUpload(name, file).Result;
             else
                 return null;
+        }
+
+        public bool Remove(string path)
+        {
+            return streamRemove(path).Result;
         }
     }
 }

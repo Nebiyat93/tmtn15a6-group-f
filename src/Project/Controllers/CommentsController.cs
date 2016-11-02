@@ -66,8 +66,18 @@ namespace Project.Controllers
                 return NotFound();
             else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == comm.CommenterId)
             {
+                if (comm.Image == null)
+                {
+                    Comments.Remove(id);
+                    return new NoContentResult();
+                }
+                var im = new Uri(comm.Image);
+                var name = im.Segments[im.Segments.Length - 1];
+                var test = imageHelp.Remove(name);
+
                 Comments.Remove(id);
                 return new NoContentResult();
+                
             }
             else return Unauthorized();
         }

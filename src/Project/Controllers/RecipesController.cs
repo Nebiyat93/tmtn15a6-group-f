@@ -174,6 +174,14 @@ namespace Project.Controllers
                 return NotFound();
             else if (this.User.Claims.FirstOrDefault(w => w.Type == "userId").Value == acc.CreatorId)
             {
+                if (acc.Image == null)
+                {
+                    Recipes.Remove(id);
+                    return new NoContentResult();
+                }
+                var im = new Uri(acc.Image);
+                var name = im.Segments[im.Segments.Length - 1];
+                var test = imageHelp.Remove(name);
                 Recipes.Remove(id);
                 return new NoContentResult();
             }

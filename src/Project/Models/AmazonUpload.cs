@@ -16,8 +16,8 @@ namespace Project.Models
         /// <summary>
         /// FIXA CREDENTIALS.
         /// </summary>
-        private string awsAccessKeyId = "AKIAJDHFS6STYYJX5AAA";
-        private string awsSecretAccessKey = "lTmx4qE9lz+yDcugtS8Nw21E3FyF+z8QlYHFzeWo";
+        private string awsAccessKeyId = "sampletext";
+        private string awsSecretAccessKey = "Hola Senorita ";
 
         public AmazonUpload() 
             {
@@ -42,9 +42,10 @@ namespace Project.Models
                 var request = await _client.DeleteObjectAsync(new DeleteObjectRequest()
                 {
                     BucketName = _bucketName,
-                    Key = path
+                    Key = folderName + path
                 });
-                return request.HttpStatusCode == System.Net.HttpStatusCode.OK;
+
+            return request.HttpStatusCode == System.Net.HttpStatusCode.NoContent;
             }
 
 
