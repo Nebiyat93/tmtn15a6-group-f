@@ -23,7 +23,6 @@ namespace Project.Models
         [StringLength(70, MinimumLength = 5, ErrorMessage = "NameWrongLength")]
         public string Name { get; set; }
 
-        
         [Required(ErrorMessage = "MissingDescription")]
         [StringLength(300, MinimumLength = 10, ErrorMessage = "DescriptionWrongLength")]
         public string Description { get; set; }

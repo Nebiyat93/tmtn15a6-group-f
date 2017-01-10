@@ -9,15 +9,15 @@ namespace Project.Models
     public class AmazonUpload : ImageUpload
     {
             
-            static IAmazonS3 _client; 
-            private string _bucketName = "heca-mjecipe";
-            private string _hostName = "https://s3.eu-central-1.amazonaws.com";
-        private string folderName = "images/";
+            static IAmazonS3 _client;
+        private string _bucketName = "mjecipesimages";
+        private string _hostName = "https://s3.eu-central-1.amazonaws.com";
+        private string folderName = "mjecipes/";
         /// <summary>
         /// FIXA CREDENTIALS.
         /// </summary>
-        private string awsAccessKeyId = "JustSomeSampleText";
-        private string awsSecretAccessKey = "BecauseTheRealKeyShouldNotBePublic";
+        private string awsAccessKeyId = "AKIAIM5IEHUFYTK7DWQA";
+        private string awsSecretAccessKey = "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";
 
         public AmazonUpload() 
             {
