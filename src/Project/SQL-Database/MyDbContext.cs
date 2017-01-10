@@ -13,7 +13,7 @@ namespace Project.SQL_Database
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string connString = "Data Source=dbmjecipes.cql21jwognxo.eu-central-1.rds.amazonaws.com;Integrated Security=False;User ID=vcqn;Password=santouryuu9;Connect Timeout=15;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;Initial Catalog=dbmjecipes";
+            string connString = "Data Source=dbmjecipes.cql21jwognxo.eu-central-1.rds.amazonaws.com;Integrated Security=False;User ID=vcqn;Password=santouryuu9;Connect Timeout=15;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;InitialCatalog=dbmjecipes";
             optionsBuilder.UseSqlServer(connString);
         }
 
