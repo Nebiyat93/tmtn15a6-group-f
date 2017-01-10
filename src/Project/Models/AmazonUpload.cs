@@ -16,8 +16,8 @@ namespace Project.Models
         /// <summary>
         /// FIXA CREDENTIALS.
         /// </summary>
-        private string awsAccessKeyId = "AKIAIM5IEHUFYTK7DWQA";
-        private string awsSecretAccessKey = "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";
+        private string awsAccessKeyId = "hehehe";
+        private string awsSecretAccessKey = "secrethehehe";
 
         public AmazonUpload() 
             {
